@@ -2,9 +2,10 @@
   "name": "webtester-dashboard",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "rm -rf dist && mkdir -p dist && cp -R index.html src README.md dist/",
     "dev": "python3 -m http.server 5173",
+    "build": "rm -rf dist && mkdir -p dist && cp -R index.html src README.md dist/",
     "preview": "python3 -m http.server 4173 -d dist"
   }
 }
