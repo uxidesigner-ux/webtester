@@ -18,3 +18,6 @@ npm run preview
 - default: ko-KR
 - fallback: en-US
 - locales: ko-KR, en-US, fr-FR, de-DE, es-ES, it-IT, pt-BR, zh-Hans-CN, zh-Hant-TW
+
+## 9) 배포 URL
+- https://uxidesigner-ux.github.io/webtester/
