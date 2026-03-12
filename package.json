@@ -1,0 +1,10 @@
+{
+  "name": "webtester-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rm -rf dist && mkdir -p dist && cp -R index.html src README.md dist/",
+    "dev": "python3 -m http.server 5173",
+    "preview": "python3 -m http.server 4173 -d dist"
+  }
+}
