@@ -1,4 +1,149 @@
-<div class="min-h-screen p-8">
-  <h1 class="text-3xl font-black mb-4" data-i18n="app.title">위기 분석 대시보드</h1>
-  <p class="text-gray-600" data-i18n="app.subtitle">BCP47 locale + static deploy ready</p>
+<div class="relative min-h-screen flex">
+  <div class="md:hidden fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white/95 backdrop-blur-sm z-50 border-b border-red-100 shadow-sm">
+    <h1 class="text-xl font-bold theme-text-primary" data-i18n="app.mobileTitle">위기 분석 대시보드</h1>
+    <div class="flex items-center gap-2">
+      <select id="locale-switcher" class="text-xs border border-gray-300 rounded px-2 py-1 bg-white"></select>
+      <button id="mobile-menu-button" class="text-gray-700 focus:outline-none p-2" aria-label="menu" data-i18n-aria-label="app.menuAriaLabel">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="bg-gray-50 border-r border-gray-200 text-gray-800 w-64 fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40 shadow-sm overflow-y-auto pt-20 md:pt-8 pb-8 px-4 flex flex-col h-screen">
+    <div class="mb-8 px-2">
+      <span class="text-xs font-bold text-red-500 tracking-wider uppercase">Strategic Report</span>
+      <h2 class="text-2xl font-bold text-gray-900 leading-tight mt-1" data-i18n="app.reportTitle">제5차 중동 전쟁<br>심층 역학 분석</h2>
+    </div>
+    <nav id="main-nav" class="flex flex-col space-y-1.5">
+      <a href="#overview" class="nav-link px-4 py-2.5 rounded-lg font-medium text-sm flex items-center"><span class="section-number">1</span><span data-i18n="nav.overview">사태 개요</span></a>
+      <a href="#geopolitics" class="nav-link px-4 py-2.5 rounded-lg font-medium text-sm flex items-center"><span class="section-number">2</span><span data-i18n="nav.geopolitics">왜 터졌나: 지정학적 동인</span></a>
+      <a href="#history" class="nav-link px-4 py-2.5 rounded-lg font-medium text-sm flex items-center"><span class="section-number">3</span><span data-i18n="nav.history">전쟁 타임라인</span></a>
+      <a href="#experts" class="nav-link px-4 py-2.5 rounded-lg font-medium text-sm flex items-center"><span class="section-number">4</span><span data-i18n="nav.experts">전문가 심층 분석</span></a>
+      <a href="#military" class="nav-link px-4 py-2.5 rounded-lg font-medium text-sm flex items-center"><span class="section-number">5</span><span data-i18n="nav.military">전장의 역학</span></a>
+      <a href="#regime" class="nav-link px-4 py-2.5 rounded-lg font-medium text-sm flex items-center"><span class="section-number">6</span><span data-i18n="nav.regime">체제 내구성</span></a>
+      <a href="#economy" class="nav-link px-4 py-2.5 rounded-lg font-medium text-sm flex items-center"><span class="section-number">7</span><span data-i18n="nav.economy">경제 충격파</span></a>
+      <a href="#scenarios" class="nav-link px-4 py-2.5 rounded-lg font-medium text-sm flex items-center"><span class="section-number">8</span><span data-i18n="nav.scenarios">최종 시나리오</span></a>
+    </nav>
+    <div class="mt-auto pt-8 px-2 text-xs text-gray-400">
+      <p data-i18n="app.source">Source: Zakaria, 박현도, 성일광, 인남식</p>
+      <p data-i18n="app.date">Date: March 2026</p>
+    </div>
+  </aside>
+
+  <main class="flex-1 min-w-0 md:ml-64 pt-20 md:pt-8 px-4 sm:px-8 lg:px-12 pb-24 bg-white">
+    <section id="overview" class="content-section mb-20">
+      <div class="inline-block px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full mb-4" data-i18n="sections.overview.badge">SECTION 1 — CRISIS OVERVIEW</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-6 text-gray-900 tracking-tight" data-i18n="sections.overview.title">트럼프의 '권 교체'와<br>이란 체제의 결사 항전</h2>
+      <p class="text-lg md:text-xl leading-relaxed text-gray-700 mb-6 max-w-4xl" data-i18n="sections.overview.summary">2026년 2월 28일, 미국과 이스라엘의 대규모 공습 작전으로 제5차 중동 전쟁이 새로운 국면을 맞았습니다.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="kpi-card border-t-4 border-t-red-500"><p class="text-sm font-bold text-gray-500 uppercase tracking-wide">영향권 인구</p><p class="text-3xl font-black text-gray-900 mt-2">9,200만 명</p></div>
+        <div class="kpi-card border-t-4 border-t-gray-800"><p class="text-sm font-bold text-gray-500 uppercase tracking-wide">신정 체제 지속 기간</p><p class="text-3xl font-black text-gray-900 mt-2">47년</p></div>
+        <div class="kpi-card border-t-4 border-t-red-500"><p class="text-sm font-bold text-gray-500 uppercase tracking-wide">미군 사상자</p><p class="text-3xl font-black text-gray-900 mt-2">발생 확인</p></div>
+        <div class="kpi-card border-t-4 border-t-gray-800"><p class="text-sm font-bold text-gray-500 uppercase tracking-wide">투입 전력 규모</p><p class="text-xl font-black text-gray-900 mt-2">미 공군 45% + 항모 2개</p></div>
+      </div>
+    </section>
+
+    <section id="geopolitics" class="content-section mb-20">
+      <div class="inline-block px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full mb-4">SECTION 2 — GEOPOLITICAL DRIVERS</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-3 text-gray-900 tracking-tight">왜 터졌나: 40년 구원(舊怨)과<br>이익의 충돌</h2>
+      <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+        <table class="geopolitics-table w-full">
+          <thead><tr><th class="rounded-tl-xl">국가 / 지도자</th><th>핵심 목표</th><th class="rounded-tr-xl">행동 배경 (So What?)</th></tr></thead>
+          <tbody>
+            <tr><td class="font-bold text-gray-900">🇺🇸 미국 (트럼프)</td><td><strong>정권 교체</strong></td><td>중간선거 지지층 결집과 외교적 성과 강조.</td></tr>
+            <tr><td class="font-bold text-gray-900">🇮🇱 이스라엘 (네타냐후)</td><td><strong>이란 미사일 완전 제거</strong></td><td>실존적 위협 제거 목적.</td></tr>
+            <tr><td class="font-bold text-gray-900">🇸🇦 사우디 (MBS)</td><td><strong>이란 위협 근본적 제거</strong></td><td>경제 발전 프로젝트 보호.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="history" class="content-section mb-20">
+      <div class="inline-block px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full mb-4">SECTION 3 — TIMELINE</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-3 text-gray-900 tracking-tight">전쟁 타임라인</h2>
+      <div class="section-bridge"><p class="text-sm text-gray-700"><strong>맥락:</strong> 지정학적 이해관계가 군사 행동으로 전환된 과정을 추적합니다.</p></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="phase-card phase-1 strategy-card pl-8"><h4 class="font-black text-gray-900 text-lg mb-2">Phase 1</h4><p class="text-sm text-gray-700">프록시 네트워크 붕괴</p></div>
+        <div class="phase-card phase-2 strategy-card pl-8"><h4 class="font-black text-gray-900 text-lg mb-2">Phase 2</h4><p class="text-sm text-gray-700">레드라인 교차와 핵 위기</p></div>
+        <div class="phase-card phase-3 strategy-card pl-8"><h4 class="font-black text-gray-900 text-lg mb-2">Phase 3</h4><p class="text-sm text-gray-700">레짐 체인지와 전면전</p></div>
+      </div>
+    </section>
+
+    <section id="experts" class="content-section mb-20">
+      <div class="inline-block px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full mb-4">SECTION 4 — EXPERT INSIGHTS</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-3 text-gray-900 tracking-tight">전문가들은 이 전쟁을 어떻게 보는가</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"><h3 class="font-bold text-gray-900 text-lg">파리드 자카리아</h3><blockquote class="expert-quote p-4 text-sm text-gray-700 leading-relaxed mb-4 font-medium">정권 교체 전략은 매우 순진한 발상이라는 점을 강조.</blockquote></div>
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"><h3 class="font-bold text-gray-900 text-lg">박현도 교수</h3><blockquote class="expert-quote p-4 text-sm text-gray-700 leading-relaxed mb-4 font-medium">지상군 투입 없이는 종결이 어렵다는 분석.</blockquote></div>
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"><h3 class="font-bold text-gray-900 text-lg">성일광 교수</h3><blockquote class="expert-quote p-4 text-sm text-gray-700 leading-relaxed mb-4 font-medium">보복 타겟의 변화가 변곡점이 된다는 분석.</blockquote></div>
+      </div>
+    </section>
+
+    <section id="military" class="content-section mb-20">
+      <div class="inline-block px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full mb-4">SECTION 5 — MILITARY DYNAMICS</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-3 text-gray-900 tracking-tight">전장의 역학</h2>
+      <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 mb-6">
+        <p class="text-blue-800 font-bold mb-3 text-center">미·이 연합군의 타겟 우선순위 추정</p>
+        <div class="chart-container" style="height: 280px;"><canvas id="usTargetChart"></canvas></div>
+      </div>
+      <div class="bg-red-50 p-5 rounded-xl border border-red-100">
+        <p class="text-red-800 font-bold mb-3 text-center">이란의 보복 자산 구성 및 잔존 전력 추정</p>
+        <div class="chart-container" style="height: 280px;"><canvas id="iranAssetChart"></canvas></div>
+      </div>
+    </section>
+
+    <section id="regime" class="content-section mb-20">
+      <div class="inline-block px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full mb-4">SECTION 6 — REGIME RESILIENCE</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-3 text-gray-900 tracking-tight">왜 안 끝나나: 체제 내구성</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="strategy-card"><h4 class="font-bold text-gray-900 mb-3 text-lg">소련식 하이브리드 복합체</h4><p class="text-sm text-gray-700">사람이 아닌 제도로 버티는 구조.</p></div>
+        <div class="strategy-card"><h4 class="font-bold text-gray-900 mb-3 text-lg">IRGC 분권 저항 메커니즘</h4><p class="text-sm text-gray-700">참수작전 이후에도 빠른 반격.</p></div>
+      </div>
+    </section>
+
+    <section id="economy" class="content-section mb-20">
+      <div class="inline-block px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full mb-4">SECTION 7 — ECONOMIC SHOCKWAVE</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-3 text-gray-900 tracking-tight">경제 충격파</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="strategy-card border-t-4 border-t-red-500">
+          <h4 class="font-bold text-gray-900 mb-3">한국의 구조적 에너지 취약성</h4>
+          <div class="risk-meter"><div class="risk-meter-fill bg-red-500" style="width: 70%;"></div></div>
+        </div>
+        <div class="strategy-card border-t-4 border-t-gray-800">
+          <h4 class="font-bold text-gray-900 mb-3">호르무즈 해협 의존도 랭킹</h4>
+          <div class="chart-container" style="height: 280px;"><canvas id="hormuzDependencyChart"></canvas></div>
+        </div>
+      </div>
+      <div class="mt-6 bg-white p-4 rounded-lg border border-red-100">
+        <p class="text-red-800 font-bold mb-3 text-center text-sm">공격-방어 비용 비대칭 구조</p>
+        <div class="chart-container" style="height: 220px;"><canvas id="costAsymmetryChart"></canvas></div>
+      </div>
+    </section>
+
+    <section id="scenarios" class="content-section mb-20">
+      <div class="inline-block px-3 py-1 bg-red-100 text-red-700 font-bold text-sm rounded-full mb-4">SECTION 8 — SCENARIOS & RECOMMENDATIONS</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-3 text-gray-900 tracking-tight">최종 시나리오 및 제언</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+        <div class="scenario-card"><div class="bg-gray-100 p-4 border-b border-gray-200"><h4 class="font-black text-gray-900 text-lg">시나리오 A</h4></div><div class="p-5"><p class="text-sm text-gray-700">외교적 타결 시나리오.</p></div></div>
+        <div class="scenario-card border-2 border-red-300"><div class="bg-red-500 text-white text-center py-1.5 text-sm font-black tracking-wide">가장 유력</div><div class="p-5"><p class="text-sm text-gray-700">소모적 장기전 시나리오.</p></div></div>
+        <div class="scenario-card"><div class="bg-gray-800 text-white p-4 border-b border-gray-700"><h4 class="font-black text-white text-lg">시나리오 C</h4></div><div class="p-5"><p class="text-sm text-gray-700">발칸화 및 내전 시나리오.</p></div></div>
+      </div>
+
+      <div class="space-y-4 mb-12">
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <button class="w-full px-6 py-4 bg-gray-50 flex justify-between items-center text-left focus:outline-none hover:bg-gray-100 transition-colors accordion-btn" data-target="acc-1"><span class="font-bold text-lg text-gray-900">변곡점 1</span><svg class="w-5 h-5 text-gray-500 transform transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div id="acc-1" class="px-6 py-4 bg-white text-gray-700 text-sm leading-relaxed border-t border-gray-200">네타냐후 총리 생존 여부.</div>
+        </div>
+      </div>
+
+      <div class="bg-gray-900 text-white p-8 rounded-xl shadow-lg">
+        <h3 class="text-2xl font-black text-white mb-2">경영진 및 정책 입안자를 위한 전략적 제언</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-gray-800 rounded-lg p-5 border border-gray-700"><h4 class="font-bold text-white mb-2">Action 1</h4><p class="text-xs text-gray-400">비축유 컨틴전시 가동.</p></div>
+          <div class="bg-gray-800 rounded-lg p-5 border border-gray-700"><h4 class="font-bold text-white mb-2">Action 2</h4><p class="text-xs text-gray-400">중동 공급망 다변화.</p></div>
+          <div class="bg-gray-800 rounded-lg p-5 border border-red-500/50"><h4 class="font-bold text-white mb-2">Action 3</h4><p class="text-xs text-gray-400">완전 봉쇄 스트레스 테스트.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
