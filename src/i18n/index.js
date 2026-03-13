@@ -1,11 +1,11 @@
 import { detectLocale } from './utils.js';
 async function load(locale){
   try{
-    const r = await fetch(`/src/i18n/locales/${locale}/common.json`);
+    const r = await fetch(new URL(`./locales/${locale}/common.json`, import.meta.url));
     if(!r.ok) throw new Error();
     return await r.json();
   }catch{
-    return (await fetch('/src/i18n/locales/en-US/common.json')).json();
+    return (await fetch(new URL('./locales/en-US/common.json', import.meta.url))).json();
   }
 }
 export async function initI18n(){
