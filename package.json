@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "python3 -m http.server 5173",
-    "build": "rm -rf dist && mkdir -p dist && cp -R index.html src README.md dist/",
-    "preview": "python3 -m http.server 4173 -d dist"
+    "build": "node scripts/build-static.mjs",
+    "preview": "python3 -m http.server 4173 -d dist",
+    "check": "node scripts/validate-locales.mjs"
   }
 }
