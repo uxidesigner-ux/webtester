@@ -208,3 +208,7 @@ function initCharts() {
     });
   }
 }
+console.log('main.js loaded');
+console.log('economy canvas:', document.getElementById('economyChart'));
+console.log('Chart type:', typeof Chart);
+console.log('initCharts start');
