@@ -7,6 +7,6 @@
     "dev": "python3 -m http.server 5173",
     "build": "node scripts/build-static.mjs",
     "preview": "python3 -m http.server 4173 -d dist",
-    "check": "node scripts/validate-locales.mjs"
+    "check": "node scripts/validate-locales.mjs && node scripts/validate-dashboard.mjs"
   }
 }
