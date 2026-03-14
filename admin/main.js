@@ -6,6 +6,8 @@ const STORAGE_KEY = 'report-admin-draft-v1';
 const DRAFT_INDEX_KEY = 'report-admin-draft-index-v1';
 const DRAFT_ITEM_PREFIX = 'report-admin-draft-item:';
 
+const publishedModules = import.meta.glob('../content/reports/*.json', { eager: true, import: 'default' });
+
 const editor = document.getElementById('editor');
 const previewRoot = document.getElementById('preview-root');
 const blockList = document.getElementById('block-list');
