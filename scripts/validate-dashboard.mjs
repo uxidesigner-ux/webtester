@@ -1,35 +1,73 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = process.cwd();
-const dashboardPath = resolve(root, 'src/components/dashboard.html');
-const html = readFileSync(dashboardPath, 'utf8');
-
-const requiredAnchors = [
-  '#overview',
-  '#geopolitics',
-  '#history',
-  '#experts',
-  '#military',
-  '#regime',
-  '#economy',
-  '#scenarios'
+const requiredPaths = [
+  'admin/index.html',
+  'admin/main.js',
+  'content/reports',
+  'src/rendering/reportRenderer.js',
+  'src/rendering/blockRenderers.js',
+  'src/js/report-page.js'
 ];
 
-const missing = requiredAnchors.filter((anchor) => !html.includes(`href="${anchor}"`) && !html.includes(`id="${anchor.slice(1)}"`));
-if (missing.length > 0) {
-  throw new Error(`dashboard validation failed: missing anchors/sections: ${missing.join(', ')}`);
+for (const target of requiredPaths) {
+  const full = resolve(root, target);
+  if (!existsSync(full)) throw new Error(`platform validation failed: missing ${target}`);
 }
 
-const lineCount = html.split('\n').length;
-if (lineCount < 120) {
-  throw new Error(
-    `dashboard validation failed: file seems truncated (${lineCount} lines, expected >= 120)`
-  );
+const reportDir = resolve(root, 'content/reports');
+const reportFiles = readdirSync(reportDir).filter((name) => name.endsWith('.json'));
+if (reportFiles.length < 2) {
+  throw new Error('platform validation failed: content/reports must have at least 2 JSON files');
 }
 
-if (!html.includes('data-i18n="app.reportTitle"')) {
-  throw new Error('dashboard validation failed: i18n root key app.reportTitle is missing');
+for (const file of reportFiles) {
+  const report = JSON.parse(readFileSync(resolve(reportDir, file), 'utf8'));
+  if (!report.slug || !report.title) {
+    throw new Error(`platform validation failed: ${file} missing slug/title`);
+  }
+
+  const sectionIds = new Set();
+
+  for (const block of report.blocks ?? []) {
+    const required = ['id', 'type', 'sectionId', 'navLabel', 'visibleInNav', 'title', 'description', 'styleVariant', 'order'];
+    for (const key of required) {
+      if (block[key] === undefined || block[key] === null || block[key] === '') {
+        throw new Error(`platform validation failed: ${file} block(${block.id ?? 'unknown'}) missing ${key}`);
+      }
+    }
+
+    if (sectionIds.has(block.sectionId)) {
+      throw new Error(`platform validation failed: ${file} has duplicated sectionId(${block.sectionId})`);
+    }
+    sectionIds.add(block.sectionId);
+
+    if (block.visibleInNav === true && !String(block.navLabel ?? '').trim()) {
+      throw new Error(`platform validation failed: ${file} block(${block.id ?? 'unknown'}) visibleInNav=true requires navLabel`);
+    }
+
+
+    if (block.type === 'rich-text') {
+      for (const [idx, ref] of (block.references ?? []).entries()) {
+        if (!String(ref?.url ?? '').trim()) {
+          throw new Error(`platform validation failed: ${file} rich-text block(${block.id ?? 'unknown'}) reference[${idx}] url is required`);
+        }
+      }
+    }
+
+    if (block.type === 'chart') {
+      const labels = block.chart?.labels ?? [];
+      if (!Array.isArray(labels) || labels.length === 0) {
+        throw new Error(`platform validation failed: ${file} chart block(${block.id ?? 'unknown'}) requires labels`);
+      }
+      for (const dataset of block.chart?.datasets ?? []) {
+        if ((dataset.data ?? []).length !== labels.length) {
+          throw new Error(`platform validation failed: ${file} chart block(${block.id ?? 'unknown'}) labels/datasets length mismatch`);
+        }
+      }
+    }
+  }
 }
 
-console.log(`Dashboard validation passed (${lineCount} lines).`);
+console.log(`Platform validation passed (${reportFiles.length} report JSON files).`);
