@@ -1,0 +1,61 @@
+{
+  "slug": "tesla-weekly",
+  "title": "Tesla Weekly Snapshot",
+  "subtitle": "생산/출하/투자심리 주간 점검",
+  "description": "차트와 KPI 블록을 포함한 두 번째 샘플 리포트입니다.",
+  "date": "2026-03-14",
+  "theme": "market",
+  "sources": ["Tesla IR", "Nasdaq"],
+  "blocks": [
+    {
+      "id": "hero-1",
+      "type": "hero",
+      "sectionId": "overview",
+      "navLabel": "Overview",
+      "visibleInNav": true,
+      "title": "이번 주 핵심",
+      "description": "주간 출하 회복과 마진 방어 시그널이 혼재됩니다.",
+      "styleVariant": "default",
+      "order": 1
+    },
+    {
+      "id": "kpi-1",
+      "type": "kpi-grid",
+      "sectionId": "kpi",
+      "navLabel": "KPI",
+      "visibleInNav": true,
+      "title": "운영 KPI",
+      "description": "주간 업데이트",
+      "styleVariant": "default",
+      "order": 2,
+      "items": [
+        { "label": "주간 출하량", "value": "+6.2%" },
+        { "label": "평균 판매가", "value": "-1.1%" },
+        { "label": "에너지 매출", "value": "+4.8%" }
+      ]
+    },
+    {
+      "id": "chart-1",
+      "type": "chart",
+      "sectionId": "trend",
+      "navLabel": "Trend",
+      "visibleInNav": true,
+      "title": "최근 4주 출하 추이",
+      "description": "단위: 천 대",
+      "styleVariant": "default",
+      "order": 3,
+      "chart": {
+        "type": "line",
+        "labels": ["W1", "W2", "W3", "W4"],
+        "datasets": [
+          {
+            "label": "출하량",
+            "data": [21, 20, 22, 23],
+            "borderColor": "#2563eb",
+            "backgroundColor": "rgba(37,99,235,0.2)"
+          }
+        ]
+      }
+    }
+  ]
+}
