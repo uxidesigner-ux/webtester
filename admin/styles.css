@@ -258,7 +258,6 @@
 
 .admin-message--success { color: #166534; }
 .admin-message--error { color: #991b1b; }
-.admin-message--warning { color: #92400e; }
 
 .preview-frame {
   border: 1px solid var(--admin-border);
@@ -275,14 +274,6 @@
   border-radius: 16px;
   padding: 0.5rem;
   background: #fff;
-}
-
-
-.preview-root:empty::before {
-  content: "Preview가 여기에 표시됩니다.";
-  color: var(--admin-muted);
-  display: block;
-  padding: 0.75rem;
 }
 
 .preview-root pre {

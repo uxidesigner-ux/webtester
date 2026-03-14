@@ -2,14 +2,13 @@ import { hydrateCharts } from '../src/rendering/chartRuntime.js';
 import { renderReport, validateReport } from '../src/rendering/reportRenderer.js';
 
 const STORAGE_KEY = 'report-admin-draft-v1';
-
 const editor = document.getElementById('editor');
 const previewRoot = document.getElementById('preview-root');
 const blockList = document.getElementById('block-list');
+
 const adminMessage = document.getElementById('admin-message');
 const previewFrame = document.getElementById('preview-frame');
-const desktopBtn = document.getElementById('preview-desktop');
-const mobileBtn = document.getElementById('preview-mobile');
+
 
 const metaFields = {
   slug: document.getElementById('meta-slug'),
@@ -20,12 +19,6 @@ const metaFields = {
   theme: document.getElementById('meta-theme'),
   sources: document.getElementById('meta-sources')
 };
-
-const requiredElements = [editor, previewRoot, blockList, adminMessage, previewFrame, desktopBtn, mobileBtn, ...Object.values(metaFields)];
-if (requiredElements.some((el) => !el)) {
-  document.body.innerHTML = '<main style="padding:1rem"><h1>Admin initialization failed</h1><p>Required admin elements are missing. Check admin/index.html IDs.</p></main>';
-  throw new Error('Admin initialization failed: missing required DOM elements');
-}
 
 const defaultReport = {
   slug: 'new-report-slug',
@@ -50,11 +43,6 @@ const defaultReport = {
   ]
 };
 
-function setMessage(text, type = 'success') {
-  adminMessage.textContent = text;
-  adminMessage.className = `admin-message admin-message--${type}`;
-}
-
 function syncMetaFromReport(report) {
   metaFields.slug.value = report.slug ?? '';
   metaFields.title.value = report.title ?? '';
@@ -73,17 +61,12 @@ function writeEditorJson(report) {
   editor.value = JSON.stringify(report, null, 2);
 }
 
-function normalizeOrder(report) {
-  report.blocks = (report.blocks ?? [])
-    .sort((a, b) => a.order - b.order)
-    .map((block, index) => ({ ...block, order: index + 1 }));
-}
-
 function renderBlockList(report) {
   blockList.innerHTML = '';
   const blocks = [...(report.blocks ?? [])].sort((a, b) => a.order - b.order);
   for (const [index, block] of blocks.entries()) {
     const li = document.createElement('li');
+
     li.className = 'admin-block-item';
 
     const row = document.createElement('div');
@@ -92,20 +75,28 @@ function renderBlockList(report) {
 
     const meta = document.createElement('div');
     meta.className = 'admin-block-meta';
-    meta.innerHTML = `<span>#${block.id}</span><span>${block.title ?? ''}</span><span>${block.sectionId}</span><span>${block.visibleInNav ? 'nav:on' : 'nav:off'}</span>`;
+    meta.innerHTML = `<span>#${block.id}</span><span>${block.sectionId}</span><span>${block.visibleInNav ? 'nav:on' : 'nav:off'}</span>`;
 
     const up = document.createElement('button');
     up.textContent = '↑';
     up.className = 'admin-btn admin-btn--small';
+    li.innerHTML = `${index + 1}. <strong>${block.type}</strong> (${block.id}) `;
+
+    const up = document.createElement('button');
+    up.textContent = '↑';
+
     up.addEventListener('click', () => moveBlock(block.id, -1));
 
     const down = document.createElement('button');
     down.textContent = '↓';
+
     down.className = 'admin-btn admin-btn--small';
+
     down.addEventListener('click', () => moveBlock(block.id, 1));
 
     const remove = document.createElement('button');
     remove.textContent = '삭제';
+
     remove.className = 'admin-btn admin-btn--small admin-btn--danger';
     remove.addEventListener('click', () => deleteBlock(block.id));
 
@@ -114,8 +105,16 @@ function renderBlockList(report) {
     actions.append(up, down, remove);
 
     li.append(row, meta, actions);
+    remove.addEventListener('click', () => deleteBlock(block.id));
+
+    li.append(' ', up, ' ', down, ' ', remove);
+
     blockList.append(li);
   }
+}
+
+function normalizeOrder(report) {
+  report.blocks = (report.blocks ?? []).sort((a, b) => a.order - b.order).map((block, index) => ({ ...block, order: index + 1 }));
 }
 
 function updateFromMeta() {
@@ -131,7 +130,7 @@ function updateFromMeta() {
     writeEditorJson(report);
     renderAll();
   } catch {
-    setMessage('JSON 파싱 오류: 기본 정보 반영을 건너뜀', 'error');
+    // invalid JSON state is handled by renderAll
   }
 }
 
@@ -192,20 +191,27 @@ function renderAll() {
     const report = readEditorJson();
     syncMetaFromReport(report);
     renderBlockList(report);
-
     const errors = validateReport(report);
     if (errors.length > 0) {
       previewRoot.innerHTML = `<pre>${errors.join('\n')}</pre>`;
-      setMessage(`검증 오류 ${errors.length}건`, 'error');
+
+      adminMessage.textContent = `검증 오류 ${errors.length}건`;
+      adminMessage.className = 'admin-message admin-message--error';
+
       return;
     }
-
     previewRoot.innerHTML = renderReport(report);
     hydrateCharts(report);
-    setMessage('Preview updated', 'success');
+
+    adminMessage.textContent = 'Preview updated';
+    adminMessage.className = 'admin-message admin-message--success';
   } catch (error) {
     previewRoot.innerHTML = `<pre>${error.message}</pre>`;
-    setMessage(error.message, 'error');
+    adminMessage.textContent = error.message;
+    adminMessage.className = 'admin-message admin-message--error';
+  } catch (error) {
+    previewRoot.innerHTML = `<pre>${error.message}</pre>`;
+
   }
 }
 
@@ -217,27 +223,15 @@ document.getElementById('add-block').addEventListener('click', () => {
   addBlock(document.getElementById('new-block-type').value);
 });
 
-document.getElementById('new-report').addEventListener('click', () => {
-  setReport(structuredClone(defaultReport));
-  setMessage('새 리포트 초안을 생성했습니다.', 'success');
-});
-
-document.getElementById('save-draft').addEventListener('click', () => {
-  localStorage.setItem(STORAGE_KEY, editor.value);
-  setMessage('localStorage에 초안을 저장했습니다.', 'success');
-});
-
+document.getElementById('new-report').addEventListener('click', () => setReport(structuredClone(defaultReport)));
+document.getElementById('save-draft').addEventListener('click', () => localStorage.setItem(STORAGE_KEY, editor.value));
 document.getElementById('load-draft').addEventListener('click', () => {
   const draft = localStorage.getItem(STORAGE_KEY);
-  if (!draft) {
-    setMessage('저장된 초안이 없습니다.', 'error');
-    return;
+  if (draft) {
+    editor.value = draft;
+    renderAll();
   }
-  editor.value = draft;
-  renderAll();
-  setMessage('초안을 불러왔습니다.', 'success');
 });
-
 document.getElementById('export-json').addEventListener('click', () => {
   const report = readEditorJson();
   const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
@@ -246,31 +240,32 @@ document.getElementById('export-json').addEventListener('click', () => {
   a.download = `${report.slug || 'report'}.json`;
   a.click();
   URL.revokeObjectURL(a.href);
-  setMessage('JSON 파일을 내보냈습니다.', 'success');
 });
-
 document.getElementById('import-json').addEventListener('change', async (event) => {
   const [file] = event.target.files;
   if (!file) return;
   editor.value = await file.text();
   renderAll();
-  setMessage('JSON 파일을 불러왔습니다.', 'success');
 });
-
 editor.addEventListener('input', renderAll);
 
-desktopBtn.addEventListener('click', () => {
+setReport(structuredClone(defaultReport));
+
+
+const desktopBtn = document.getElementById('preview-desktop');
+const mobileBtn = document.getElementById('preview-mobile');
+
+desktopBtn?.addEventListener('click', () => {
   previewFrame.classList.remove('preview-frame--mobile');
   previewFrame.classList.add('preview-frame--desktop');
   desktopBtn.classList.add('admin-btn--active');
   mobileBtn.classList.remove('admin-btn--active');
 });
 
-mobileBtn.addEventListener('click', () => {
+mobileBtn?.addEventListener('click', () => {
   previewFrame.classList.remove('preview-frame--desktop');
   previewFrame.classList.add('preview-frame--mobile');
   mobileBtn.classList.add('admin-btn--active');
   desktopBtn.classList.remove('admin-btn--active');
 });
 
-setReport(structuredClone(defaultReport));
