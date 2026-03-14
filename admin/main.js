@@ -56,12 +56,7 @@ const requiredElements = [
 ];
 
 if (requiredElements.some((el) => !el)) {
-  document.body.innerHTML = `
-    <main class="admin-init-error">
-      <h1>Admin initialization failed</h1>
-      <p>Required admin elements are missing. Check admin/index.html IDs.</p>
-    </main>
-  `;
+  document.body.innerHTML = '<main class="admin-init-error"><h1>Admin initialization failed</h1><p>Required admin elements are missing. Check admin/index.html IDs.</p></main>';
   throw new Error('Admin initialization failed: missing required DOM elements');
 }
 
