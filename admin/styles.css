@@ -331,3 +331,71 @@
   color: #991b1b;
   box-shadow: var(--admin-shadow);
 }
+
+.admin-rich-text-editor {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.admin-section-head--tight {
+  margin-bottom: 0.35rem;
+}
+
+.admin-ref-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.admin-ref-item {
+  border: 1px dashed var(--admin-border);
+  border-radius: 10px;
+  padding: 0.55rem;
+  display: grid;
+  gap: 0.45rem;
+  background: #fff;
+}
+
+.admin-help-list {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--admin-muted);
+  display: grid;
+  gap: 0.4rem;
+}
+
+.admin-simple-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.admin-list-item {
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 0.45rem 0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: #fff;
+}
+
+.admin-list-item span {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.82rem;
+}
+
+.admin-list-item small {
+  color: var(--admin-muted);
+}
+
+.admin-list-empty {
+  color: var(--admin-muted);
+  border: 1px dashed var(--admin-border);
+  border-radius: 10px;
+  padding: 0.55rem;
+}

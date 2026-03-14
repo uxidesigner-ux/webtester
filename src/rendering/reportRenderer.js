@@ -32,6 +32,15 @@ export function validateReport(report) {
       errors.push(`block(${block.id ?? 'unknown'}) visibleInNav=true requires navLabel`);
     }
 
+    if (block.type === 'rich-text') {
+      const refs = block.references ?? [];
+      for (const [idx, ref] of refs.entries()) {
+        if (!String(ref?.url ?? '').trim()) {
+          errors.push(`rich-text block(${block.id}) reference[${idx}] url is required`);
+        }
+      }
+    }
+
     if (block.type === 'chart') {
       const labels = block.chart?.labels ?? [];
       const datasets = block.chart?.datasets ?? [];
@@ -45,6 +54,7 @@ export function validateReport(report) {
       }
     }
   }
+
   return errors;
 }
 

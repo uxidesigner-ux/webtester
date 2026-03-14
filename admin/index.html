@@ -13,11 +13,11 @@
       <header class="admin-topbar admin-panel">
         <div>
           <h1>리포트 관리자</h1>
-          <p class="admin-subtext">GitHub-only MVP · localStorage draft + JSON import/export + preview</p>
+          <p class="admin-subtext">GitHub-only MVP · local draft와 발행 JSON을 분리해 운영합니다.</p>
         </div>
         <div class="admin-badges">
-          <span class="admin-badge admin-badge--primary">JSON-first</span>
-          <span class="admin-badge">No runtime GitHub write</span>
+          <span class="admin-badge admin-badge--primary">Draft = browser localStorage</span>
+          <span class="admin-badge">Published = content/reports/*.json</span>
         </div>
       </header>
 
@@ -25,7 +25,7 @@
         <aside class="admin-column admin-column--left">
           <section class="admin-card admin-panel">
             <h2>기본 정보</h2>
-            <p class="admin-help">slug, title, date, theme 등 기본 메타를 먼저 입력하세요.</p>
+            <p class="admin-help">이 정보는 JSON 루트 메타 데이터입니다.</p>
             <div class="admin-form-grid">
               <label class="admin-field">slug <input id="meta-slug" placeholder="my-report-slug" /></label>
               <label class="admin-field">title <input id="meta-title" placeholder="리포트 제목" /></label>
@@ -57,6 +57,33 @@
               <button id="add-block" class="admin-btn admin-btn--primary">블록 추가</button>
             </div>
             <ul id="block-list" class="admin-block-list"></ul>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <div class="admin-section-head">
+              <h2>rich-text 블록 편집</h2>
+              <span id="rich-text-target" class="admin-badge">선택된 블록 없음</span>
+            </div>
+            <p class="admin-help">블록 목록에서 rich-text 블록의 편집 버튼을 눌러주세요.</p>
+            <div id="rich-text-editor" class="admin-rich-text-editor" hidden>
+              <label class="admin-field">title <input id="rt-title" /></label>
+              <label class="admin-field">description <input id="rt-description" /></label>
+              <label class="admin-field">body (HTML 지원) <textarea id="rt-body" rows="8"></textarea></label>
+              <div class="admin-section-head admin-section-head--tight">
+                <h3>references[]</h3>
+                <button id="rt-add-ref" type="button" class="admin-btn admin-btn--small">reference 추가</button>
+              </div>
+              <div id="rt-references" class="admin-ref-list"></div>
+            </div>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <h2>저장 위치 안내</h2>
+            <ul class="admin-help-list">
+              <li><strong>초안 저장</strong>: 현재 브라우저(localStorage)에만 저장됩니다.</li>
+              <li><strong>JSON 내보내기</strong>: 발행용 JSON 파일이 다운로드됩니다.</li>
+              <li><strong>Published 목록 반영</strong>: <code>content/reports/*.json</code> 커밋 + build/deploy 후 반영됩니다.</li>
+            </ul>
           </section>
         </aside>
 
@@ -91,6 +118,22 @@
             <div id="preview-frame" class="preview-frame preview-frame--desktop">
               <div id="preview-root" class="preview-root"></div>
             </div>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <div class="admin-section-head admin-section-head--tight">
+              <h2>Published reports</h2>
+              <button id="refresh-published" class="admin-btn admin-btn--small" type="button">새로고침</button>
+            </div>
+            <ul id="published-list" class="admin-simple-list"></ul>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <div class="admin-section-head admin-section-head--tight">
+              <h2>Local drafts</h2>
+              <button id="refresh-drafts" class="admin-btn admin-btn--small" type="button">새로고침</button>
+            </div>
+            <ul id="draft-list" class="admin-simple-list"></ul>
           </section>
         </aside>
       </section>
