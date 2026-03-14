@@ -8,7 +8,6 @@ const blockList = document.getElementById('block-list');
 
 const adminMessage = document.getElementById('admin-message');
 const previewFrame = document.getElementById('preview-frame');
-=======
 
 
 const metaFields = {
@@ -81,7 +80,6 @@ function renderBlockList(report) {
     const up = document.createElement('button');
     up.textContent = '↑';
     up.className = 'admin-btn admin-btn--small';
-=======
     li.innerHTML = `${index + 1}. <strong>${block.type}</strong> (${block.id}) `;
 
     const up = document.createElement('button');
@@ -93,7 +91,6 @@ function renderBlockList(report) {
     down.textContent = '↓';
 
     down.className = 'admin-btn admin-btn--small';
-=======
 
     down.addEventListener('click', () => moveBlock(block.id, 1));
 
@@ -108,7 +105,6 @@ function renderBlockList(report) {
     actions.append(up, down, remove);
 
     li.append(row, meta, actions);
-=======
     remove.addEventListener('click', () => deleteBlock(block.id));
 
     li.append(' ', up, ' ', down, ' ', remove);
@@ -201,7 +197,6 @@ function renderAll() {
 
       adminMessage.textContent = `검증 오류 ${errors.length}건`;
       adminMessage.className = 'admin-message admin-message--error';
-=======
 
       return;
     }
@@ -214,7 +209,6 @@ function renderAll() {
     previewRoot.innerHTML = `<pre>${error.message}</pre>`;
     adminMessage.textContent = error.message;
     adminMessage.className = 'admin-message admin-message--error';
-=======
   } catch (error) {
     previewRoot.innerHTML = `<pre>${error.message}</pre>`;
 
@@ -274,5 +268,4 @@ mobileBtn?.addEventListener('click', () => {
   mobileBtn.classList.add('admin-btn--active');
   desktopBtn.classList.remove('admin-btn--active');
 });
-=======
 
