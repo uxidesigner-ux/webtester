@@ -2,6 +2,12 @@
 
 정적 HTML/CSS/JS + GitHub Pages 기반으로 여러 리포트를 운영하는 플랫폼입니다.
 
+## 루트/경로 역할
+- `/` : 플랫폼 홈 (역할 안내 + 운영 방식 + 빠른 진입)
+- `/admin/` : 관리자 작성 도구 (draft 작성/preview/import/export)
+- `/reports/` : 발행된 리포트 목록 (build 결과)
+- `/reports/{slug}/` : 개별 발행 리포트 상세
+
 ## 프로젝트 구조
 - `admin/index.html`: 관리자 페이지 (기본 정보 편집 + 블록 추가/삭제/순서 변경 + localStorage + JSON import/export + preview)
 - `content/reports/*.json`: 리포트 원본 데이터 (샘플: `middle-east-2025`, `middle-east-war-2026`, `tesla-weekly`)
@@ -14,11 +20,18 @@
 - 리포트 목록/상세 페이지는 `npm run build` 시 `dist/reports/index.html`, `dist/reports/{slug}/index.html`로 생성됩니다.
 - 따라서 PR에는 generated HTML이 아니라 `content/reports/*.json + renderer + build script + admin` 변경만 포함하는 것이 원칙입니다.
 
+## 운영 흐름 요약
+1. `/admin/`에서 draft 작성/수정
+2. localStorage로 draft 저장(브라우저 내부)
+3. JSON 내보내기(발행 후보)
+4. `content/reports/{slug}.json` 반영 후 commit
+5. build/deploy 이후 `/reports/`에 published 반영
+
 ## 관리자 페이지 사용법
 1. `npm run dev` 후 `http://localhost:5173/admin/` 접속
 2. 기본 정보 입력 (slug, title, subtitle, description, date, theme, sources)
 3. 블록 타입 선택 후 `블록 추가`, 블록 목록에서 `삭제/순서 변경`
-4. JSON 편집기로 세부 데이터 수정
+4. rich-text 블록은 전용 편집 UI에서 title/description/body/references[] 수정
 5. `초안 저장/불러오기`로 localStorage 관리
 6. `JSON 내보내기`로 파일 저장 후 `content/reports/{slug}.json` 반영
 

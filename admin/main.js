@@ -12,7 +12,6 @@ const adminMessage = document.getElementById('admin-message');
 const previewFrame = document.getElementById('preview-frame');
 const desktopBtn = document.getElementById('preview-desktop');
 const mobileBtn = document.getElementById('preview-mobile');
-
 const publishedList = document.getElementById('published-list');
 const draftList = document.getElementById('draft-list');
 
@@ -149,7 +148,6 @@ function updateFromMeta() {
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean);
-
     writeEditorJson(report);
     renderAll();
   } catch {
@@ -384,7 +382,7 @@ async function renderPublishedList() {
       const report = await res.json();
       items.push({ slug: report.slug, title: report.title });
     } catch {
-      // ignore
+      // ignore individual fetch error
     }
   }
 
@@ -510,13 +508,11 @@ document.getElementById('export-json').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(report, null, 2)], {
     type: 'application/json'
   });
-
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `${report.slug || 'report'}.json`;
   a.click();
   URL.revokeObjectURL(a.href);
-
   setMessage('발행용 JSON 파일을 내보냈습니다.', 'success');
 });
 
