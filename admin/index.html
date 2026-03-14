@@ -6,7 +6,6 @@
     <title>Report Admin</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="../src/styles/main.css" />
-
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body class="admin-page">
@@ -94,61 +93,6 @@
             </div>
           </section>
         </aside>
-  </head>
-  <body>
-    <main>
-      <h1>리포트 관리자</h1>
-      <p>localStorage draft + JSON import/export + preview 도구 (런타임 GitHub 저장 없음)</p>
-
-      <section class="report-block">
-        <h2>기본 정보</h2>
-        <div class="kpi-grid">
-          <label>slug <input id="meta-slug" /></label>
-          <label>title <input id="meta-title" /></label>
-          <label>subtitle <input id="meta-subtitle" /></label>
-          <label>description <input id="meta-description" /></label>
-          <label>date <input id="meta-date" type="date" /></label>
-          <label>theme <input id="meta-theme" /></label>
-          <label>sources (comma separated) <input id="meta-sources" /></label>
-        </div>
-      </section>
-
-      <section class="report-block">
-        <h2>블록 편집</h2>
-        <div>
-          <select id="new-block-type">
-            <option value="hero">hero</option>
-            <option value="rich-text">rich-text</option>
-            <option value="kpi-grid">kpi-grid</option>
-            <option value="table">table</option>
-            <option value="timeline">timeline</option>
-            <option value="quote-cards">quote-cards</option>
-            <option value="chart">chart</option>
-            <option value="accordion">accordion</option>
-            <option value="cta-link">cta-link</option>
-          </select>
-          <button id="add-block">블록 추가</button>
-        </div>
-        <ul id="block-list"></ul>
-      </section>
-
-      <section class="report-block">
-        <h2>JSON 편집기</h2>
-        <textarea id="editor" rows="18" style="width: 100%"></textarea>
-        <div>
-          <button id="new-report">새 리포트</button>
-          <button id="save-draft">초안 저장</button>
-          <button id="load-draft">초안 불러오기</button>
-          <button id="export-json">JSON 내보내기</button>
-          <label>JSON 가져오기<input id="import-json" type="file" accept="application/json" /></label>
-        </div>
-        <p>발행 가이드: export → <code>content/reports/{slug}.json</code> 저장 → commit/push → build/deploy</p>
-      </section>
-
-      <section class="report-block">
-        <h2>Preview</h2>
-        <div id="preview-root"></div>
-
       </section>
     </main>
 

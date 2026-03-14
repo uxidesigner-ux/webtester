@@ -258,6 +258,7 @@
 
 .admin-message--success { color: #166534; }
 .admin-message--error { color: #991b1b; }
+.admin-message--warning { color: #92400e; }
 
 .preview-frame {
   border: 1px solid var(--admin-border);
@@ -276,6 +277,13 @@
   background: #fff;
 }
 
+.preview-root:empty::before {
+  content: "Preview가 여기에 표시됩니다.";
+  color: var(--admin-muted);
+  display: block;
+  padding: 0.75rem;
+}
+
 .preview-root pre {
   border: 1px solid #fecaca;
   background: #fff1f2;
@@ -289,6 +297,7 @@
   .admin-layout {
     grid-template-columns: 1fr 1fr;
   }
+
   .admin-column--right {
     grid-column: 1 / -1;
   }
@@ -298,13 +307,27 @@
   .admin-layout {
     grid-template-columns: 1fr;
   }
+
   .admin-panel--sticky {
     position: static;
   }
+
   .admin-action-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
   .admin-form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.admin-init-error {
+  max-width: 720px;
+  margin: 4rem auto;
+  background: #fff;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: #991b1b;
+  box-shadow: var(--admin-shadow);
 }
