@@ -5,8 +5,11 @@ const STORAGE_KEY = 'report-admin-draft-v1';
 const editor = document.getElementById('editor');
 const previewRoot = document.getElementById('preview-root');
 const blockList = document.getElementById('block-list');
+
 const adminMessage = document.getElementById('admin-message');
 const previewFrame = document.getElementById('preview-frame');
+=======
+
 
 const metaFields = {
   slug: document.getElementById('meta-slug'),
@@ -64,6 +67,7 @@ function renderBlockList(report) {
   const blocks = [...(report.blocks ?? [])].sort((a, b) => a.order - b.order);
   for (const [index, block] of blocks.entries()) {
     const li = document.createElement('li');
+
     li.className = 'admin-block-item';
 
     const row = document.createElement('div');
@@ -77,15 +81,25 @@ function renderBlockList(report) {
     const up = document.createElement('button');
     up.textContent = '↑';
     up.className = 'admin-btn admin-btn--small';
+=======
+    li.innerHTML = `${index + 1}. <strong>${block.type}</strong> (${block.id}) `;
+
+    const up = document.createElement('button');
+    up.textContent = '↑';
+
     up.addEventListener('click', () => moveBlock(block.id, -1));
 
     const down = document.createElement('button');
     down.textContent = '↓';
+
     down.className = 'admin-btn admin-btn--small';
+=======
+
     down.addEventListener('click', () => moveBlock(block.id, 1));
 
     const remove = document.createElement('button');
     remove.textContent = '삭제';
+
     remove.className = 'admin-btn admin-btn--small admin-btn--danger';
     remove.addEventListener('click', () => deleteBlock(block.id));
 
@@ -94,6 +108,11 @@ function renderBlockList(report) {
     actions.append(up, down, remove);
 
     li.append(row, meta, actions);
+=======
+    remove.addEventListener('click', () => deleteBlock(block.id));
+
+    li.append(' ', up, ' ', down, ' ', remove);
+
     blockList.append(li);
   }
 }
@@ -179,18 +198,26 @@ function renderAll() {
     const errors = validateReport(report);
     if (errors.length > 0) {
       previewRoot.innerHTML = `<pre>${errors.join('\n')}</pre>`;
+
       adminMessage.textContent = `검증 오류 ${errors.length}건`;
       adminMessage.className = 'admin-message admin-message--error';
+=======
+
       return;
     }
     previewRoot.innerHTML = renderReport(report);
     hydrateCharts(report);
+
     adminMessage.textContent = 'Preview updated';
     adminMessage.className = 'admin-message admin-message--success';
   } catch (error) {
     previewRoot.innerHTML = `<pre>${error.message}</pre>`;
     adminMessage.textContent = error.message;
     adminMessage.className = 'admin-message admin-message--error';
+=======
+  } catch (error) {
+    previewRoot.innerHTML = `<pre>${error.message}</pre>`;
+
   }
 }
 
@@ -230,6 +257,7 @@ editor.addEventListener('input', renderAll);
 
 setReport(structuredClone(defaultReport));
 
+
 const desktopBtn = document.getElementById('preview-desktop');
 const mobileBtn = document.getElementById('preview-mobile');
 
@@ -246,3 +274,5 @@ mobileBtn?.addEventListener('click', () => {
   mobileBtn.classList.add('admin-btn--active');
   desktopBtn.classList.remove('admin-btn--active');
 });
+=======
+
