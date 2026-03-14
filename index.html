@@ -3,14 +3,101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>제5차 중동 전쟁 및 이란 사태 심층 분석 대시보드</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonts-archive/Paperlogy/subsets/Paperlogy-dynamic-subset.css" />
+    <title>Webtester Report Platform</title>
     <link rel="stylesheet" href="src/styles/main.css" />
   </head>
-  <body class="antialiased">
-    <div id="app"></div>
-    <script type="module" src="src/js/main.js"></script>
+  <body>
+    <main class="platform-home">
+      <section class="platform-hero report-block">
+        <p class="platform-kicker">GitHub-only MVP</p>
+        <h1>JSON 기반 리포트 생성 플랫폼</h1>
+        <p>
+          이 프로젝트는 <strong>관리자 도구(/admin/)</strong>로 초안을 만들고,
+          <code>content/reports/*.json</code>를 통해 <strong>정적 리포트(/reports/)</strong>를 발행하는
+          GitHub Pages 중심 플랫폼입니다.
+        </p>
+        <div class="platform-cta-row">
+          <a class="platform-cta platform-cta--primary" href="reports/">리포트 보기</a>
+          <a class="platform-cta" href="admin/">관리자 열기</a>
+        </div>
+      </section>
+
+      <section class="report-block">
+        <h2>핵심 경로 안내</h2>
+        <div class="platform-grid">
+          <article class="platform-card">
+            <h3>/admin/</h3>
+            <p>초안 작성/편집 도구입니다. localStorage 저장, JSON import/export, preview를 제공합니다.</p>
+          </article>
+          <article class="platform-card">
+            <h3>/reports/</h3>
+            <p>build 결과로 생성된 발행 리포트 목록입니다. 개별 리포트는 <code>/reports/{slug}/</code>에서 확인합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-block">
+        <h2>운영 방식 (Draft vs Published)</h2>
+        <div class="platform-grid">
+          <article class="platform-card">
+            <h3>Draft</h3>
+            <ul>
+              <li>저장 위치: 브라우저 localStorage</li>
+              <li>관리 경로: /admin/</li>
+              <li>배포 반영: 자동 반영되지 않음</li>
+            </ul>
+          </article>
+          <article class="platform-card">
+            <h3>Published</h3>
+            <ul>
+              <li>원본 위치: content/reports/*.json</li>
+              <li>생성 경로: dist/reports/* (build 결과)</li>
+              <li>배포 반영: commit + build/deploy 필요</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-block">
+        <h2>발행된 리포트</h2>
+        <div class="platform-grid">
+          <article class="platform-card">
+            <h3>중동 지정학 리스크 리포트 2025</h3>
+            <p>초기 샘플 리포트 데이터</p>
+            <a href="reports/middle-east-2025/">리포트 열기</a>
+          </article>
+          <article class="platform-card">
+            <h3>중동 분쟁 리포트 2026</h3>
+            <p>군사·에너지·물류 리스크 브리핑</p>
+            <a href="reports/middle-east-war-2026/">리포트 열기</a>
+          </article>
+          <article class="platform-card">
+            <h3>Tesla Weekly Snapshot</h3>
+            <p>생산/출하/투자심리 주간 점검</p>
+            <a href="reports/tesla-weekly/">리포트 열기</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="report-block">
+        <h2>관리자 사용 흐름</h2>
+        <ol class="platform-flow">
+          <li>관리자(/admin/)에서 리포트 작성 및 preview 확인</li>
+          <li>JSON 내보내기로 발행용 파일 생성</li>
+          <li><code>content/reports/{slug}.json</code> 저장/커밋</li>
+          <li><code>npm run build</code>로 정적 리포트 생성</li>
+          <li>GitHub Pages 배포 후 /reports/에 반영 확인</li>
+        </ol>
+      </section>
+
+      <section class="report-block">
+        <h2>프로젝트 제약</h2>
+        <ul>
+          <li>DB/CMS/백엔드 없이 정적 자산 기반으로 운영</li>
+          <li>런타임 GitHub write 없음 (관리자 페이지는 저장 도구만 제공)</li>
+          <li>GitHub Pages 하위 경로(/webtester/)를 고려해 상대 경로 사용</li>
+        </ul>
+      </section>
+    </main>
   </body>
 </html>

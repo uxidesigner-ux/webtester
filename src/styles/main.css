@@ -1,33 +1,416 @@
-body {font-family: "Paperlogy", -apple-system, BlinkMacSystemFont, "Segoe UI",Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;background-color: #ffffff;
-color: #1f2937;scroll-behavior: smooth;}
-.chart-container { position: relative; margin: auto; height: 350px; width: 100%; }
-.kpi-card {background-color: white; border-radius: 0.75rem; padding: 1.5rem;border: 1px solid #fee2e2;box-shadow: 0 4px 6px -1px rgb(255 77 79 / 0.1), 0 2px 4px -2px rgb(255 77 79 / 0.1);transition: transform 0.3s ease, box-shadow 0.3s ease;}
-.kpi-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(255 77 79 / 0.15), 0 4px 6px -4px rgb(255 77 79 / 0.1); }
-.nav-link { transition: all 0.3s ease; color: #4b5563; }
-.nav-link.active, .nav-link:hover { background-color: #ff4d4f; color: white; }
-.content-section { scroll-margin-top: 80px; }
-.theme-text-primary { color: #ff4d4f; }
-.timeline-container { position: relative; padding-left: 2rem; }
-.timeline-container::before { content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 2px; background-color: #fca5a5; }
-.timeline-item { position: relative; margin-bottom: 2rem; }
-.timeline-dot { position: absolute; left: -2.1rem; top: 0.25rem; width: 1rem; height: 1rem; border-radius: 50%; background-color: #ff4d4f; border: 3px solid white; box-shadow: 0 0 0 2px #fca5a5; }
-.expert-quote { border-left: 4px solid #ff4d4f; background: linear-gradient(to right, #fef2f2, transparent); }
-.insight-box { background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%); border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1.5rem; }
-.strategy-card { background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; transition: all 0.3s ease; }
-.strategy-card:hover { border-color: #fca5a5; box-shadow: 0 8px 25px -5px rgba(255,77,79,0.1); }
-.phase-card { position: relative; overflow: hidden; }
-.phase-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
-.phase-1::before { background: #1e40af; }
-.phase-2::before { background: #d97706; }
-.phase-3::before { background: #dc2626; }
-.risk-meter { height: 8px; border-radius: 4px; background: #e5e7eb; overflow: hidden; }
-.risk-meter-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
-.scenario-card { border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; transition: all 0.3s ease; }
-.scenario-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px -8px rgba(0,0,0,0.12); }
-.geopolitics-table th { background: #1f2937; color: white; padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-.geopolitics-table td { padding: 0.75rem 1rem; font-size: 0.85rem; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
-.geopolitics-table tr:hover td { background: #fef2f2; }
-.cta-slide-link { background: linear-gradient(135deg, #1f2937 0%, #374151 100%); border: 1px solid #4b5563; transition: all 0.3s ease; }
-.cta-slide-link:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(0,0,0,0.3); border-color: #ff4d4f; }
-.section-bridge { background: #f9fafb; border-left: 3px solid #ff4d4f; padding: 1rem 1.25rem; margin-bottom: 2rem; border-radius: 0 0.5rem 0.5rem 0; }
-.section-number { display: inline-flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; background: #ff4d4f; color: white; border-radius: 50%; font-size: 0.75rem; font-weight: 800; margin-right: 0.5rem; flex-shrink: 0;
+body {
+  font-family: 'Paperlogy', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #f8fafc;
+  color: #111827;
+  scroll-behavior: smooth;
+  margin: 0;
+}
+
+/* Report Platform Layout */
+.report-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.report-mobile-topbar {
+  display: none;
+}
+
+.mobile-menu-button {
+  border: 1px solid #fecaca;
+  border-radius: 999px;
+  background: #fff;
+  color: #b91c1c;
+  font-weight: 700;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+}
+
+.report-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.25rem 1rem;
+  border-right: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  z-index: 20;
+  transform: translateX(0);
+  transition: transform 0.25s ease;
+}
+
+.report-sidebar-header h1 {
+  margin: 0.25rem 0;
+  font-size: 1.2rem;
+}
+
+.report-sidebar-header p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.92rem;
+}
+
+.report-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.report-nav {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.report-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.report-nav-link:hover,
+.report-nav-link.active {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.report-nav-index {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.report-nav-empty {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.report-source-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.report-source-list li {
+  border: 1px solid #fca5a5;
+  background: #fff;
+  color: #7f1d1d;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+}
+
+.report-main {
+  padding: 1.3rem;
+  max-width: 980px;
+  width: 100%;
+}
+
+.report-header {
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+.report-header h2 {
+  margin: 0.2rem 0 0.35rem;
+  font-size: 1.9rem;
+}
+
+.report-header p {
+  margin: 0;
+  color: #374151;
+}
+
+.report-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.content-section {
+  scroll-margin-top: 86px;
+}
+
+.report-block {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1.1rem;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+}
+
+.section-badge {
+  margin: 0 0 0.4rem;
+  color: #b91c1c;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.block-description {
+  color: #4b5563;
+}
+
+.section-bridge {
+  background: #fff7ed;
+  border-left: 3px solid #fb7185;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid #fee2e2;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.12);
+}
+
+.kpi-card strong {
+  display: block;
+  font-size: 1.1rem;
+}
+
+.table-wrap {
+  overflow: auto;
+}
+
+.geopolitics-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.geopolitics-table th {
+  background: #1f2937;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.8rem;
+}
+
+.geopolitics-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: top;
+}
+
+.timeline-container {
+  list-style: none;
+  margin: 0;
+  padding-left: 2rem;
+  position: relative;
+}
+
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #fecaca;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -1.53rem;
+  top: 0.2rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: #ef4444;
+}
+
+.quote-cards {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.expert-quote {
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  border-left: 4px solid #ef4444;
+  background: #fff7f7;
+}
+
+.strategy-card {
+  border-color: #fecaca;
+}
+
+.chart-wrap {
+  min-height: 320px;
+}
+
+.accordion {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.accordion-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  background: #fcfcfd;
+}
+
+.accordion-item summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cta-slide-link {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: #ffffff;
+}
+
+.cta-slide-link a {
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 10px;
+  display: inline-block;
+  margin-top: 0.45rem;
+  padding: 0.45rem 0.8rem;
+}
+
+.rich-text-references h4 {
+  margin: 0.45rem 0 0.35rem;
+  font-size: 0.85rem;
+}
+
+.rich-text-references a {
+  color: #1d4ed8;
+}
+
+/* Home */
+main {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.platform-home {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.platform-hero {
+  background: linear-gradient(180deg, #fff7f7 0%, #ffffff 100%);
+}
+
+.platform-kicker {
+  color: #b91c1c;
+  font-weight: 700;
+  margin: 0;
+}
+
+.platform-cta-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.platform-cta {
+  display: inline-block;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0.5rem 0.85rem;
+  text-decoration: none;
+  color: #111827;
+}
+
+.platform-cta--primary {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.platform-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.platform-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.8rem;
+  background: #ffffff;
+}
+
+.platform-card h3 {
+  margin-top: 0;
+}
+
+.platform-card a {
+  color: #1d4ed8;
+}
+
+.platform-flow {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+  .report-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .report-mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.75rem 1rem;
+    background: rgba(248, 250, 252, 0.9);
+    border-bottom: 1px solid #e5e7eb;
+    backdrop-filter: blur(6px);
+  }
+
+  .report-sidebar {
+    position: fixed;
+    left: 0;
+    width: min(84vw, 320px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .report-sidebar.-translate-x-full {
+    transform: translateX(-100%);
+  }
+
+  .report-main {
+    padding-top: 0.8rem;
+  }
+}
