@@ -1,0 +1,145 @@
+{
+  "slug": "middle-east-2025",
+  "title": "중동 지정학 리스크 리포트 2025",
+  "subtitle": "호르무즈 해협, 에너지 시장, 글로벌 공급망 영향 분석",
+  "description": "GitHub-only 정적 배포를 위한 샘플 리포트 데이터입니다.",
+  "date": "2026-03-14",
+  "theme": "geopolitics",
+  "sources": [
+    "IEA Oil Market Report",
+    "IMF Regional Economic Outlook",
+    "UN OCHA Situation Report"
+  ],
+  "blocks": [
+    {
+      "id": "hero-1",
+      "type": "hero",
+      "sectionId": "overview",
+      "navLabel": "개요",
+      "visibleInNav": true,
+      "title": "2025 중동 정세 핵심 요약",
+      "description": "에너지 운송로 불안과 군사적 긴장이 동시 확대되는 국면입니다.",
+      "styleVariant": "default",
+      "order": 1
+    },
+    {
+      "id": "kpi-1",
+      "type": "kpi-grid",
+      "sectionId": "kpi",
+      "navLabel": "핵심지표",
+      "visibleInNav": true,
+      "title": "핵심 리스크 지표",
+      "description": "최근 30일 기준 체감 위험도",
+      "styleVariant": "default",
+      "order": 2,
+      "items": [
+        {
+          "label": "유가 변동성",
+          "value": "+18%"
+        },
+        {
+          "label": "해상 운임",
+          "value": "+11%"
+        },
+        {
+          "label": "보험 프리미엄",
+          "value": "+24%"
+        }
+      ]
+    },
+    {
+      "id": "chart-1",
+      "type": "chart",
+      "sectionId": "chart-risk",
+      "navLabel": "리스크차트",
+      "visibleInNav": true,
+      "title": "국가별 해협 의존도",
+      "description": "비중이 높은 국가일수록 공급 충격에 취약합니다.",
+      "styleVariant": "default",
+      "order": 3,
+      "chart": {
+        "type": "bar",
+        "labels": [
+          "중국",
+          "한국",
+          "인도",
+          "일본"
+        ],
+        "datasets": [
+          {
+            "label": "의존도(%)",
+            "data": [
+              38,
+              12,
+              12,
+              8
+            ],
+            "backgroundColor": [
+              "#1d4ed8",
+              "#dc2626",
+              "#2563eb",
+              "#93c5fd"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "timeline-1",
+      "type": "timeline",
+      "sectionId": "timeline",
+      "navLabel": "타임라인",
+      "visibleInNav": true,
+      "title": "최근 이벤트",
+      "description": "주요 사건 흐름",
+      "styleVariant": "default",
+      "order": 4,
+      "events": [
+        {
+          "date": "2026-02-01",
+          "title": "해협 통항 경보",
+          "description": "보험료 상승 시작"
+        },
+        {
+          "date": "2026-02-12",
+          "title": "역내 군사 훈련",
+          "description": "유가 급등"
+        }
+      ]
+    },
+    {
+      "id": "cta-1",
+      "type": "cta-link",
+      "sectionId": "action",
+      "navLabel": "대응",
+      "visibleInNav": true,
+      "title": "원문 데이터 확인",
+      "description": "관련 공개 데이터와 출처를 점검하세요.",
+      "styleVariant": "default",
+      "order": 5,
+      "href": "https://www.iea.org/reports/oil-market-report-march-2026",
+      "linkLabel": "IEA 리포트 보기"
+    },
+    {
+      "id": "accordion-1",
+      "type": "accordion",
+      "sectionId": "faq",
+      "navLabel": "FAQ",
+      "visibleInNav": true,
+      "title": "자주 묻는 질문",
+      "description": "리포트 해석에 필요한 핵심 질의",
+      "styleVariant": "default",
+      "order": 6,
+      "items": [
+        {
+          "title": "왜 한국 의존도가 중요합니까?",
+          "content": "호르무즈 통과 물량 차질은 정유·전력·물류 비용을 동시에 자극하기 때문입니다."
+        },
+        {
+          "title": "단기적으로 가장 먼저 볼 지표는?",
+          "content": "운임, 보험료, 브렌트-두바이 스프레드, 해협 통항 공지 순으로 점검합니다."
+        }
+      ]
+    }
+  ]
+}

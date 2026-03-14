@@ -1,0 +1,57 @@
+{
+  "slug": "middle-east-war-2026",
+  "title": "중동 분쟁 리포트 2026",
+  "subtitle": "군사·에너지·물류 리스크 브리핑",
+  "description": "중동 정세를 블록 기반으로 구성한 샘플 리포트입니다.",
+  "date": "2026-03-14",
+  "theme": "geopolitics",
+  "sources": ["IEA", "UN OCHA"],
+  "blocks": [
+    {
+      "id": "hero-1",
+      "type": "hero",
+      "sectionId": "overview",
+      "navLabel": "개요",
+      "visibleInNav": true,
+      "title": "2026년 주요 변화",
+      "description": "해상 운송과 보험료 리스크가 동시에 확대되었습니다.",
+      "styleVariant": "default",
+      "order": 1
+    },
+    {
+      "id": "chart-1",
+      "type": "chart",
+      "sectionId": "exposure-chart",
+      "navLabel": "노출도",
+      "visibleInNav": true,
+      "title": "국가별 의존도",
+      "description": "수치가 높을수록 단기 충격에 취약합니다.",
+      "styleVariant": "default",
+      "order": 2,
+      "chart": {
+        "type": "bar",
+        "labels": ["중국", "한국", "인도", "일본"],
+        "datasets": [
+          {
+            "label": "의존도(%)",
+            "data": [38, 12, 12, 8],
+            "backgroundColor": ["#1d4ed8", "#ef4444", "#3b82f6", "#93c5fd"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "cta-1",
+      "type": "cta-link",
+      "sectionId": "action",
+      "navLabel": "참고",
+      "visibleInNav": true,
+      "title": "원문 자료",
+      "description": "IEA Oil Market Report 원문을 확인하세요.",
+      "styleVariant": "default",
+      "order": 3,
+      "href": "https://www.iea.org/reports/oil-market-report-march-2026",
+      "linkLabel": "IEA 보고서 보기"
+    }
+  ]
+}

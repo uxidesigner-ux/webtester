@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../src/styles/main.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="admin-page">
+    <main class="admin-shell">
+      <header class="admin-topbar admin-panel">
+        <div>
+          <h1>리포트 관리자</h1>
+          <p class="admin-subtext">GitHub-only MVP · local draft와 발행 JSON을 분리해 운영합니다.</p>
+        </div>
+        <div class="admin-badges">
+          <span class="admin-badge admin-badge--primary">Draft = browser localStorage</span>
+          <span class="admin-badge">Published = content/reports/*.json</span>
+        </div>
+      </header>
+
+      <section class="admin-layout">
+        <aside class="admin-column admin-column--left">
+          <section class="admin-card admin-panel">
+            <h2>기본 정보</h2>
+            <p class="admin-help">이 정보는 JSON 루트 메타 데이터입니다.</p>
+            <div class="admin-form-grid">
+              <label class="admin-field">slug <input id="meta-slug" placeholder="my-report-slug" /></label>
+              <label class="admin-field">title <input id="meta-title" placeholder="리포트 제목" /></label>
+              <label class="admin-field">subtitle <input id="meta-subtitle" placeholder="부제목" /></label>
+              <label class="admin-field">description <input id="meta-description" placeholder="요약 설명" /></label>
+              <label class="admin-field">date <input id="meta-date" type="date" /></label>
+              <label class="admin-field">theme <input id="meta-theme" placeholder="geopolitics" /></label>
+              <label class="admin-field admin-field--full">sources (comma separated) <input id="meta-sources" placeholder="IEA, IMF" /></label>
+            </div>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <div class="admin-section-head">
+              <h2>블록 편집</h2>
+              <span class="admin-badge">순서 조정 가능</span>
+            </div>
+            <div class="admin-inline-actions">
+              <select id="new-block-type" class="admin-select">
+                <option value="hero">hero</option>
+                <option value="rich-text">rich-text</option>
+                <option value="kpi-grid">kpi-grid</option>
+                <option value="table">table</option>
+                <option value="timeline">timeline</option>
+                <option value="quote-cards">quote-cards</option>
+                <option value="chart">chart</option>
+                <option value="accordion">accordion</option>
+                <option value="cta-link">cta-link</option>
+              </select>
+              <button id="add-block" class="admin-btn admin-btn--primary">블록 추가</button>
+            </div>
+            <ul id="block-list" class="admin-block-list"></ul>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <div class="admin-section-head">
+              <h2>rich-text 블록 편집</h2>
+              <span id="rich-text-target" class="admin-badge">선택된 블록 없음</span>
+            </div>
+            <p class="admin-help">블록 목록에서 rich-text 블록의 편집 버튼을 눌러주세요.</p>
+            <div id="rich-text-editor" class="admin-rich-text-editor" hidden>
+              <label class="admin-field">title <input id="rt-title" /></label>
+              <label class="admin-field">description <input id="rt-description" /></label>
+              <label class="admin-field">body (HTML 지원) <textarea id="rt-body" rows="8"></textarea></label>
+              <div class="admin-section-head admin-section-head--tight">
+                <h3>references[]</h3>
+                <button id="rt-add-ref" type="button" class="admin-btn admin-btn--small">reference 추가</button>
+              </div>
+              <div id="rt-references" class="admin-ref-list"></div>
+            </div>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <h2>저장 위치 안내</h2>
+            <ul class="admin-help-list">
+              <li><strong>초안 저장</strong>: 현재 브라우저(localStorage)에만 저장됩니다.</li>
+              <li><strong>JSON 내보내기</strong>: 발행용 JSON 파일이 다운로드됩니다.</li>
+              <li><strong>Published 목록 반영</strong>: <code>content/reports/*.json</code> 커밋 + build/deploy 후 반영됩니다.</li>
+            </ul>
+          </section>
+        </aside>
+
+        <section class="admin-column admin-column--center">
+          <section class="admin-card admin-panel admin-panel--sticky">
+            <div class="admin-section-head">
+              <h2>JSON 편집기</h2>
+              <span class="admin-badge">source of truth</span>
+            </div>
+            <textarea id="editor" rows="22" class="admin-editor"></textarea>
+            <div class="admin-action-grid">
+              <button id="new-report" class="admin-btn">새 리포트</button>
+              <button id="save-draft" class="admin-btn admin-btn--success">초안 저장</button>
+              <button id="load-draft" class="admin-btn">초안 불러오기</button>
+              <button id="export-json" class="admin-btn admin-btn--primary">JSON 내보내기</button>
+              <label class="admin-btn admin-btn--ghost">JSON 가져오기<input id="import-json" type="file" accept="application/json" /></label>
+            </div>
+            <p class="admin-guide">발행 가이드: export → <code>content/reports/{slug}.json</code> 저장 → commit/push → build/deploy</p>
+            <p id="admin-message" class="admin-message" aria-live="polite"></p>
+          </section>
+        </section>
+
+        <aside class="admin-column admin-column--right">
+          <section class="admin-card admin-panel admin-panel--sticky">
+            <div class="admin-section-head">
+              <h2>Preview</h2>
+              <div class="admin-inline-actions">
+                <button id="preview-desktop" class="admin-btn admin-btn--small admin-btn--active" type="button">Desktop</button>
+                <button id="preview-mobile" class="admin-btn admin-btn--small" type="button">Mobile</button>
+              </div>
+            </div>
+            <div id="preview-frame" class="preview-frame preview-frame--desktop">
+              <div id="preview-root" class="preview-root"></div>
+            </div>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <div class="admin-section-head admin-section-head--tight">
+              <h2>Published reports</h2>
+              <button id="refresh-published" class="admin-btn admin-btn--small" type="button">새로고침</button>
+            </div>
+            <ul id="published-list" class="admin-simple-list"></ul>
+          </section>
+
+          <section class="admin-card admin-panel">
+            <div class="admin-section-head admin-section-head--tight">
+              <h2>Local drafts</h2>
+              <button id="refresh-drafts" class="admin-btn admin-btn--small" type="button">새로고침</button>
+            </div>
+            <ul id="draft-list" class="admin-simple-list"></ul>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
