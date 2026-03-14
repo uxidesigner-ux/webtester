@@ -397,3 +397,77 @@
   border-radius: 10px;
   padding: 0.55rem;
 }
+
+.admin-badge--status {
+  font-weight: 700;
+}
+
+.admin-badge--draft {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.admin-badge--ready {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.admin-badge--published {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #166534;
+}
+
+.admin-badge--error {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.admin-help-list {
+  margin: 0;
+  padding-left: 1rem;
+  color: #334155;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.admin-validation-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.84rem;
+}
+
+.admin-inline-link {
+  color: #1d4ed8;
+  font-size: 0.84rem;
+  text-decoration: underline;
+}
+
+.admin-action-grid--publish {
+  grid-template-columns: 1fr;
+}
+
+.admin-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 0.55rem;
+  background: #fff;
+}
+
+.admin-list-item span {
+  display: grid;
+}
+
+.admin-list-empty {
+  color: var(--admin-muted);
+  font-size: 0.85rem;
+}

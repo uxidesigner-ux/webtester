@@ -76,6 +76,39 @@
 - report 페이지는 `data-report-json` 상대경로로 JSON fetch
 - `/` 절대경로 자산 참조 금지
 
+
+## 관리자 Publish UX (Draft → Publish Ready → Published)
+- **초안 저장**: 현재 브라우저 `localStorage`에만 저장됩니다. (repo 미반영)
+- **출판 준비**: editor JSON을 검증해 발행 가능 여부를 확인합니다.
+  - slug/title
+  - 블록 공통 필수 필드
+  - rich-text references URL (`http/https`)
+  - chart labels/datasets 길이
+- **출판하다**: 현재는 **manual publish UX** 입니다.
+  - `{slug}.json` 다운로드
+  - `content/reports/{slug}.json` 저장 경로 안내
+  - `/reports/{slug}/` 예상 공개 URL 안내
+  - 실제 공개 반영은 repo 반영 + build/deploy 필요
+
+상태 배지 의미:
+- `Draft`: 아직 출판 준비 검증 전 또는 검증 실패
+- `Ready to Publish`: 출판 준비 검증 통과
+- `Published`: 현재 slug가 `content/reports/{slug}.json`로 이미 존재
+
+## publish adapter 확장 구조
+`admin/publishAdapter.js`에 publish abstraction을 분리했습니다.
+- `preparePublish(report)`
+- `exportPublishJson(report)`
+- `getPublishStatus(slug)`
+- `publishReport(report, adapter)`
+
+현재 adapter는 `manual-download` 입니다. (repo write/build trigger 없음)
+
+향후 서버리스 확장 예:
+1. API route/서버리스 함수에서 GitHub API commit 생성
+2. GitHub Actions dispatch로 build/deploy 트리거
+3. admin에서는 adapter만 교체해 "진짜 publish"로 확장
+
 ## GitHub-only MVP 한계
 - 관리자 페이지에서 repo에 직접 저장/발행 불가
 - 실제 발행은 repo 파일 반영 + commit/push + Pages 배포 필요
