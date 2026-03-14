@@ -20,7 +20,7 @@ for (const target of requiredPaths) {
 }
 
 const reportDir = resolve(root, 'content/reports');
-const reportFiles = readdirSync(reportDir).filter((name) => name.endsWith('.json'));
+const reportFiles = readdirSync(reportDir).filter((name) => name.endsWith('.json') && name !== 'manifest.json');
 if (reportFiles.length < 2) {
   throw new Error('platform validation failed: content/reports must have at least 2 JSON files');
 }

@@ -11,6 +11,7 @@
 ## 프로젝트 구조
 - `admin/index.html`: 관리자 페이지 (기본 정보 편집 + 블록 추가/삭제/순서 변경 + localStorage + JSON import/export + preview)
 - `content/reports/*.json`: 리포트 원본 데이터 (샘플: `middle-east-2025`, `middle-east-war-2026`, `tesla-weekly`)
+- `content/reports/manifest.json`: published 목록 메타데이터(관리자 `/admin/`에서 목록/상태 판별에 사용)
 - `src/rendering/*`: 공통 report/block/chart renderer
 - `scripts/build-static.mjs`: `content/reports`를 읽어 `dist/reports/*` 생성
 - `dist/reports/*`: **generated output** (repo source가 아니라 build 산출물)
@@ -38,6 +39,8 @@
 4. rich-text 블록은 전용 편집 UI에서 title/description/body/references[] 수정
 5. `초안 저장/불러오기`로 localStorage 관리
 6. `JSON 내보내기`로 파일 저장 후 `content/reports/{slug}.json` 반영
+
+관리자 published 목록은 `../content/reports/manifest.json`을 기준으로 렌더링합니다.
 
 ## JSON import/export
 - Import: 관리자 페이지의 `JSON 가져오기`

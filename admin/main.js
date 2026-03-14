@@ -78,10 +78,7 @@ if (requiredElements.some((el) => !el)) {
   throw new Error('Admin initialization failed: missing required DOM elements');
 }
 
-const publishedReports = Object.values(publishedModules)
-  .filter((report) => report?.slug)
-  .map((report) => ({ slug: report.slug, title: report.title ?? report.slug }))
-  .sort((a, b) => a.slug.localeCompare(b.slug));
+let publishedReports = [];
 
 const manualPublishAdapter = createManualPublishAdapter();
 
@@ -366,6 +363,10 @@ function renderDraftList() {
   }
 }
 
+function getPublishedSlugs() {
+  return publishedReports.map((item) => item.slug);
+}
+
 function renderPublishedList() {
   if (publishedReports.length === 0) {
     publishedList.innerHTML = '<li class="admin-list-empty">published report를 찾지 못했습니다.</li>';
@@ -387,8 +388,30 @@ function renderPublishedList() {
   }
 }
 
+
+async function loadPublishedReports() {
+  publishedList.innerHTML = '<li class="admin-list-empty">published 목록 로딩 중...</li>';
+
+  try {
+    const response = await fetch('../content/reports/manifest.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`manifest request failed: ${response.status}`);
+
+    const manifest = await response.json();
+    const reports = Array.isArray(manifest?.reports) ? manifest.reports : [];
+
+    publishedReports = reports
+      .filter((item) => item?.slug)
+      .map((item) => ({ slug: item.slug, title: item.title ?? item.slug }))
+      .sort((a, b) => a.slug.localeCompare(b.slug));
+  } catch {
+    publishedReports = [];
+  }
+
+  renderPublishedList();
+}
+
 function getCurrentStatus(report) {
-  const status = getPublishStatus(report.slug, publishedReports.map((item) => item.slug));
+  const status = getPublishStatus(report.slug, getPublishedSlugs());
   if (status.isPublished) return { key: 'published', label: 'Published' };
   if (lastPrepareResult.ok) return { key: 'ready', label: 'Ready to Publish' };
   return { key: 'draft', label: 'Draft' };
@@ -405,7 +428,7 @@ function renderPublishPanel(report) {
   publishContentPath.textContent = prepared.paths.content;
   publishReportPath.textContent = prepared.paths.report;
 
-  if (prepared.slug && getPublishStatus(prepared.slug, publishedReports.map((item) => item.slug)).isPublished) {
+  if (prepared.slug && getPublishStatus(prepared.slug, getPublishedSlugs()).isPublished) {
     publishReportLink.href = `../reports/${prepared.slug}/`;
     publishReportLink.hidden = false;
   } else {
@@ -595,8 +618,8 @@ document.getElementById('import-json').addEventListener('change', async (event) 
   setMessage('JSON 파일을 불러왔습니다.', 'success');
 });
 
-document.getElementById('refresh-published').addEventListener('click', () => {
-  renderPublishedList();
+document.getElementById('refresh-published').addEventListener('click', async () => {
+  await loadPublishedReports();
   renderAll();
   setMessage('Published 목록을 갱신했습니다.', 'success');
 });
@@ -627,4 +650,5 @@ mobileBtn.addEventListener('click', () => {
 
 setReport(structuredClone(defaultReport));
 renderDraftList();
-renderPublishedList();
+await loadPublishedReports();
+renderAll();
