@@ -8,13 +8,6 @@ function esc(value = '') {
     .replaceAll('"', '&quot;');
 }
 
-function renderSources(report) {
-  const sources = Array.isArray(report.sources) ? report.sources.filter(Boolean) : [];
-  if (!sources.length) return '';
-  const chips = sources.map((source) => `<li>${esc(source)}</li>`).join('');
-  return `<ul class="report-source-list">${chips}</ul>`;
-}
-
 export function validateReport(report) {
   const errors = [];
   if (!report?.slug) errors.push('slug is required');
@@ -23,7 +16,18 @@ export function validateReport(report) {
   const sectionIds = new Set();
 
   for (const block of report?.blocks ?? []) {
-    const required = ['id', 'type', 'sectionId', 'navLabel', 'visibleInNav', 'title', 'description', 'styleVariant', 'order'];
+    const required = [
+      'id',
+      'type',
+      'sectionId',
+      'navLabel',
+      'visibleInNav',
+      'title',
+      'description',
+      'styleVariant',
+      'order'
+    ];
+
     for (const key of required) {
       if (block[key] === undefined || block[key] === null || block[key] === '') {
         errors.push(`block(${block.id ?? 'unknown'}) missing field: ${key}`);
@@ -51,9 +55,11 @@ export function validateReport(report) {
     if (block.type === 'chart') {
       const labels = block.chart?.labels ?? [];
       const datasets = block.chart?.datasets ?? [];
+
       if (!Array.isArray(labels) || labels.length === 0) {
         errors.push(`chart block(${block.id}) requires labels`);
       }
+
       for (const dataset of datasets) {
         if ((dataset.data ?? []).length !== labels.length) {
           errors.push(`chart block(${block.id}) labels/datasets length mismatch`);
@@ -61,31 +67,17 @@ export function validateReport(report) {
       }
     }
   }
+
   return errors;
-}
-
-function renderReportNav(blocks) {
-  const links = blocks
-    .filter((block) => block.visibleInNav)
-    .map((block, index) => `
-      <a class="report-nav-link ${index === 0 ? 'active' : ''}" href="#${esc(block.sectionId)}">
-        <span class="report-nav-index">${String(index + 1).padStart(2, '0')}</span>
-        <span>${esc(block.navLabel)}</span>
-      </a>
-    `)
-    .join('');
-
-  return `
-    <nav id="main-nav" class="report-nav" aria-label="리포트 섹션 내비게이션">
-      ${links || '<p class="report-nav-empty">노출 가능한 섹션이 없습니다.</p>'}
-    </nav>
-  `;
 }
 
 export function renderReport(report) {
   const sortedBlocks = [...(report.blocks ?? [])].sort((a, b) => a.order - b.order);
-  const nav = renderReportNav(sortedBlocks);
-  const sources = renderSources(report);
+
+  const nav = sortedBlocks
+    .filter((block) => block.visibleInNav)
+    .map((block) => `<a href="#${esc(block.sectionId)}">${esc(block.navLabel)}</a>`)
+    .join('');
 
   const blocks = sortedBlocks
     .map((block) => {
@@ -96,31 +88,13 @@ export function renderReport(report) {
     .join('');
 
   return `
-    <div class="report-shell">
-      <header class="report-mobile-topbar">
-        <button id="mobile-menu-button" class="mobile-menu-button" type="button" aria-controls="sidebar" aria-expanded="false">☰ 목차</button>
-      </header>
-
-      <aside id="sidebar" class="report-sidebar -translate-x-full">
-        <header class="report-sidebar-header">
-          <p class="report-kicker">Generated Report</p>
-          <h1>${esc(report.title)}</h1>
-          <p>${esc(report.subtitle ?? '')}</p>
-          <small>${esc(report.date ?? '')} · ${esc(report.theme ?? 'general')}</small>
-          ${sources}
-        </header>
-        ${nav}
-      </aside>
-
-      <main class="report-main">
-        <header class="report-header report-block">
-          <p class="report-kicker">Briefing</p>
-          <h2>${esc(report.title)}</h2>
-          <p>${esc(report.description ?? '')}</p>
-          ${sources}
-        </header>
-        <section class="report-content">${blocks}</section>
-      </main>
-    </div>
+    <header class="report-header">
+      <h1>${esc(report.title)}</h1>
+      <p>${esc(report.subtitle ?? '')}</p>
+      <p>${esc(report.description ?? '')}</p>
+      <small>${esc(report.date ?? '')} · ${esc(report.theme ?? '')}</small>
+    </header>
+    <nav class="report-nav">${nav}</nav>
+    <main>${blocks}</main>
   `;
 }
