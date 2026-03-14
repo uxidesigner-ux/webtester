@@ -16,8 +16,15 @@ for (const target of staticTargets) {
   cpSync(source, resolve(outDir, target), { recursive: true });
 }
 
-const reportFiles = readdirSync(reportDir).filter((name) => name.endsWith('.json'));
+const reportFiles = readdirSync(reportDir).filter((name) => name.endsWith('.json') && name !== 'manifest.json');
 const reports = reportFiles.map((name) => JSON.parse(readFileSync(resolve(reportDir, name), 'utf8')));
+
+const manifest = {
+  generatedAt: new Date().toISOString(),
+  reports: reports.map((report) => ({ slug: report.slug, title: report.title }))
+};
+writeFileSync(resolve(outDir, 'content/reports/manifest.json'), JSON.stringify(manifest, null, 2));
+
 
 const reportsOutDir = resolve(outDir, 'reports');
 mkdirSync(reportsOutDir, { recursive: true });

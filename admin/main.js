@@ -1,5 +1,6 @@
 import { hydrateCharts } from '../src/rendering/chartRuntime.js';
 import { renderReport, validateReport } from '../src/rendering/reportRenderer.js';
+import { createManualPublishAdapter, exportPublishJson, getPublishStatus, preparePublish, publishReport } from './publishAdapter.js';
 
 const STORAGE_KEY = 'report-admin-draft-v1';
 const DRAFT_INDEX_KEY = 'report-admin-draft-index-v1';
@@ -15,6 +16,14 @@ const mobileBtn = document.getElementById('preview-mobile');
 const publishedList = document.getElementById('published-list');
 const draftList = document.getElementById('draft-list');
 
+const publishStatusBadge = document.getElementById('publish-status-badge');
+const publishSlug = document.getElementById('publish-slug');
+const publishContentPath = document.getElementById('publish-content-path');
+const publishReportPath = document.getElementById('publish-report-path');
+const publishReportLink = document.getElementById('publish-report-link');
+const publishLastValidation = document.getElementById('publish-last-validation');
+const publishValidationList = document.getElementById('publish-validation-list');
+
 const richTextEditor = document.getElementById('rich-text-editor');
 const richTextTarget = document.getElementById('rich-text-target');
 const rtTitle = document.getElementById('rt-title');
@@ -24,6 +33,7 @@ const rtReferences = document.getElementById('rt-references');
 const rtAddRef = document.getElementById('rt-add-ref');
 
 let selectedRichTextId = null;
+let lastPrepareResult = { ok: false, errors: ['아직 출판 준비를 실행하지 않았습니다.'] };
 
 const metaFields = {
   slug: document.getElementById('meta-slug'),
@@ -52,6 +62,12 @@ const requiredElements = [
   rtBody,
   rtReferences,
   rtAddRef,
+  publishStatusBadge,
+  publishSlug,
+  publishContentPath,
+  publishReportPath,
+  publishLastValidation,
+  publishValidationList,
   ...Object.values(metaFields)
 ];
 
@@ -59,6 +75,10 @@ if (requiredElements.some((el) => !el)) {
   document.body.innerHTML = '<main class="admin-init-error"><h1>Admin initialization failed</h1><p>Required admin elements are missing. Check admin/index.html IDs.</p></main>';
   throw new Error('Admin initialization failed: missing required DOM elements');
 }
+
+let publishedReports = [];
+
+const manualPublishAdapter = createManualPublishAdapter();
 
 const defaultReport = {
   slug: 'new-report-slug',
@@ -341,33 +361,89 @@ function renderDraftList() {
   }
 }
 
-async function renderPublishedList() {
-  publishedList.innerHTML = '<li class="admin-list-empty">published 목록 로딩 중...</li>';
-  const candidates = ['middle-east-2025', 'middle-east-war-2026', 'tesla-weekly'];
+function getPublishedSlugs() {
+  return publishedReports.map((item) => item.slug);
+}
 
-  const items = [];
-  for (const slug of candidates) {
-    try {
-      const res = await fetch(`../content/reports/${slug}.json`, { cache: 'no-store' });
-      if (!res.ok) continue;
-      const report = await res.json();
-      items.push({ slug: report.slug, title: report.title });
-    } catch {
-      // ignore individual fetch error
-    }
-  }
-
-  if (items.length === 0) {
+function renderPublishedList() {
+  if (publishedReports.length === 0) {
     publishedList.innerHTML = '<li class="admin-list-empty">published report를 찾지 못했습니다.</li>';
     return;
   }
 
   publishedList.innerHTML = '';
-  for (const item of items) {
+  for (const item of publishedReports) {
     const li = document.createElement('li');
     li.className = 'admin-list-item';
-    li.innerHTML = `<span><strong>${item.title}</strong><small>${item.slug}</small></span>`;
+    li.innerHTML = `
+      <span>
+        <strong>${item.title}</strong>
+        <small>${item.slug}</small>
+      </span>
+      <a href="../reports/${item.slug}/" class="admin-inline-link" target="_blank" rel="noopener noreferrer">열기</a>
+    `;
     publishedList.append(li);
+  }
+}
+
+
+async function loadPublishedReports() {
+  publishedList.innerHTML = '<li class="admin-list-empty">published 목록 로딩 중...</li>';
+
+  try {
+    const response = await fetch('../content/reports/manifest.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`manifest request failed: ${response.status}`);
+
+    const manifest = await response.json();
+    const reports = Array.isArray(manifest?.reports) ? manifest.reports : [];
+
+    publishedReports = reports
+      .filter((item) => item?.slug)
+      .map((item) => ({ slug: item.slug, title: item.title ?? item.slug }))
+      .sort((a, b) => a.slug.localeCompare(b.slug));
+  } catch {
+    publishedReports = [];
+  }
+
+  renderPublishedList();
+}
+
+function getCurrentStatus(report) {
+  const status = getPublishStatus(report.slug, getPublishedSlugs());
+  if (status.isPublished) return { key: 'published', label: 'Published' };
+  if (lastPrepareResult.ok) return { key: 'ready', label: 'Ready to Publish' };
+  return { key: 'draft', label: 'Draft' };
+}
+
+function renderPublishPanel(report) {
+  const status = getCurrentStatus(report);
+  const prepared = preparePublish(report, validateReport);
+
+  publishStatusBadge.className = `admin-badge admin-badge--status admin-badge--${status.key}`;
+  publishStatusBadge.textContent = status.label;
+
+  publishSlug.textContent = prepared.slug || '(slug 없음)';
+  publishContentPath.textContent = prepared.paths.content;
+  publishReportPath.textContent = prepared.paths.report;
+
+  if (prepared.slug && getPublishStatus(prepared.slug, getPublishedSlugs()).isPublished) {
+    publishReportLink.href = `../reports/${prepared.slug}/`;
+    publishReportLink.hidden = false;
+  } else {
+    publishReportLink.hidden = true;
+    publishReportLink.removeAttribute('href');
+  }
+
+  publishLastValidation.textContent = lastPrepareResult.ok
+    ? '최근 검증: 통과 (출판 가능 상태)'
+    : `최근 검증: 실패 (${lastPrepareResult.errors?.length ?? 0}건)`;
+
+  publishValidationList.innerHTML = '';
+  const lines = lastPrepareResult.errors?.length ? lastPrepareResult.errors : ['검증 통과. 출판 준비 완료'];
+  for (const line of lines) {
+    const li = document.createElement('li');
+    li.textContent = line;
+    publishValidationList.append(li);
   }
 }
 
@@ -377,6 +453,7 @@ function renderAll() {
     syncMetaFromReport(report);
     renderBlockList(report);
     renderRichTextEditor();
+    renderPublishPanel(report);
 
     const errors = validateReport(report);
     if (errors.length > 0) {
@@ -442,6 +519,7 @@ document.getElementById('add-block').addEventListener('click', () => {
 
 document.getElementById('new-report').addEventListener('click', () => {
   selectedRichTextId = null;
+  lastPrepareResult = { ok: false, errors: ['새 리포트 생성 후 출판 준비를 실행하세요.'] };
   setReport(structuredClone(defaultReport));
   setMessage('새 리포트 초안을 생성했습니다.', 'success');
 });
@@ -457,7 +535,7 @@ document.getElementById('save-draft').addEventListener('click', () => {
   localStorage.setItem(DRAFT_INDEX_KEY, JSON.stringify([...index]));
 
   renderDraftList();
-  setMessage(`초안 저장 완료: browser localStorage (${slug})`, 'success');
+  setMessage(`초안 저장 완료: 이 브라우저 localStorage (${slug})`, 'success');
 });
 
 document.getElementById('load-draft').addEventListener('click', () => {
@@ -467,19 +545,65 @@ document.getElementById('load-draft').addEventListener('click', () => {
     return;
   }
   editor.value = draft;
+  lastPrepareResult = { ok: false, errors: ['초안을 불러왔습니다. 다시 출판 준비를 실행하세요.'] };
   renderAll();
   setMessage('기본 초안을 불러왔습니다.', 'success');
 });
 
+document.getElementById('prepare-publish').addEventListener('click', () => {
+  try {
+    const report = readEditorJson();
+    lastPrepareResult = preparePublish(report, validateReport);
+    renderPublishPanel(report);
+
+    if (lastPrepareResult.ok) {
+      setMessage('출판 준비 완료: 발행 가능 상태입니다.', 'success');
+      return;
+    }
+    setMessage(`출판 준비 실패: 오류 ${lastPrepareResult.errors.length}건`, 'error');
+  } catch (error) {
+    setMessage(`출판 준비 실패: ${error.message}`, 'error');
+  }
+});
+
+document.getElementById('publish-report').addEventListener('click', async () => {
+  try {
+    const report = readEditorJson();
+    if (!lastPrepareResult.ok) {
+      lastPrepareResult = preparePublish(report, validateReport);
+      renderPublishPanel(report);
+    }
+    if (!lastPrepareResult.ok) {
+      setMessage('출판 준비가 완료되지 않아 발행용 JSON을 생성할 수 없습니다.', 'error');
+      return;
+    }
+
+    const result = await publishReport(report, manualPublishAdapter, validateReport);
+    renderPublishPanel(report);
+    setMessage(result.message, 'success');
+  } catch (error) {
+    setMessage(`출판 실패: ${error.message}`, 'error');
+  }
+});
+
+document.getElementById('download-publish-json').addEventListener('click', () => {
+  try {
+    const report = readEditorJson();
+    if (!lastPrepareResult.ok) {
+      setMessage('먼저 출판 준비를 실행해 주세요.', 'warning');
+      return;
+    }
+    exportPublishJson(report);
+    setMessage('발행 JSON을 다시 다운로드했습니다.', 'success');
+  } catch (error) {
+    setMessage(`다운로드 실패: ${error.message}`, 'error');
+  }
+});
+
 document.getElementById('export-json').addEventListener('click', () => {
   const report = readEditorJson();
-  const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${report.slug || 'report'}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-  setMessage('발행용 JSON 파일을 내보냈습니다.', 'success');
+  exportPublishJson(report);
+  setMessage('JSON을 내보냈습니다. (발행 전에는 출판 준비 검증을 권장)', 'success');
 });
 
 document.getElementById('import-json').addEventListener('change', async (event) => {
@@ -487,12 +611,14 @@ document.getElementById('import-json').addEventListener('change', async (event) 
   if (!file) return;
   editor.value = await file.text();
   selectedRichTextId = null;
+  lastPrepareResult = { ok: false, errors: ['JSON을 가져왔습니다. 출판 준비를 다시 실행하세요.'] };
   renderAll();
   setMessage('JSON 파일을 불러왔습니다.', 'success');
 });
 
 document.getElementById('refresh-published').addEventListener('click', async () => {
-  await renderPublishedList();
+  await loadPublishedReports();
+  renderAll();
   setMessage('Published 목록을 갱신했습니다.', 'success');
 });
 
@@ -501,7 +627,10 @@ document.getElementById('refresh-drafts').addEventListener('click', () => {
   setMessage('Local draft 목록을 갱신했습니다.', 'success');
 });
 
-editor.addEventListener('input', renderAll);
+editor.addEventListener('input', () => {
+  lastPrepareResult = { ok: false, errors: ['초안이 변경되었습니다. 출판 준비를 다시 실행하세요.'] };
+  renderAll();
+});
 
 desktopBtn.addEventListener('click', () => {
   previewFrame.classList.remove('preview-frame--mobile');
@@ -519,4 +648,5 @@ mobileBtn.addEventListener('click', () => {
 
 setReport(structuredClone(defaultReport));
 renderDraftList();
-await renderPublishedList();
+await loadPublishedReports();
+renderAll();

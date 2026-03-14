@@ -11,6 +11,7 @@
 ## 프로젝트 구조
 - `admin/index.html`: 관리자 페이지 (기본 정보 편집 + 블록 추가/삭제/순서 변경 + localStorage + JSON import/export + preview)
 - `content/reports/*.json`: 리포트 원본 데이터 (샘플: `middle-east-2025`, `middle-east-war-2026`, `tesla-weekly`)
+- `content/reports/manifest.json`: published 목록 메타데이터(관리자 `/admin/`에서 목록/상태 판별에 사용)
 - `src/rendering/*`: 공통 report/block/chart renderer
 - `scripts/build-static.mjs`: `content/reports`를 읽어 `dist/reports/*` 생성
 - `dist/reports/*`: **generated output** (repo source가 아니라 build 산출물)
@@ -38,6 +39,8 @@
 4. rich-text 블록은 전용 편집 UI에서 title/description/body/references[] 수정
 5. `초안 저장/불러오기`로 localStorage 관리
 6. `JSON 내보내기`로 파일 저장 후 `content/reports/{slug}.json` 반영
+
+관리자 published 목록은 `../content/reports/manifest.json`을 기준으로 렌더링합니다.
 
 ## JSON import/export
 - Import: 관리자 페이지의 `JSON 가져오기`
@@ -75,6 +78,39 @@
 - GitHub Pages repo 서브패스(`/webtester/`) 환경을 고려해 상대 경로 사용
 - report 페이지는 `data-report-json` 상대경로로 JSON fetch
 - `/` 절대경로 자산 참조 금지
+
+
+## 관리자 Publish UX (Draft → Publish Ready → Published)
+- **초안 저장**: 현재 브라우저 `localStorage`에만 저장됩니다. (repo 미반영)
+- **출판 준비**: editor JSON을 검증해 발행 가능 여부를 확인합니다.
+  - slug/title
+  - 블록 공통 필수 필드
+  - rich-text references URL (`http/https`)
+  - chart labels/datasets 길이
+- **출판하다**: 현재는 **manual publish UX** 입니다.
+  - `{slug}.json` 다운로드
+  - `content/reports/{slug}.json` 저장 경로 안내
+  - `/reports/{slug}/` 예상 공개 URL 안내
+  - 실제 공개 반영은 repo 반영 + build/deploy 필요
+
+상태 배지 의미:
+- `Draft`: 아직 출판 준비 검증 전 또는 검증 실패
+- `Ready to Publish`: 출판 준비 검증 통과
+- `Published`: 현재 slug가 `content/reports/{slug}.json`로 이미 존재
+
+## publish adapter 확장 구조
+`admin/publishAdapter.js`에 publish abstraction을 분리했습니다.
+- `preparePublish(report)`
+- `exportPublishJson(report)`
+- `getPublishStatus(slug)`
+- `publishReport(report, adapter)`
+
+현재 adapter는 `manual-download` 입니다. (repo write/build trigger 없음)
+
+향후 서버리스 확장 예:
+1. API route/서버리스 함수에서 GitHub API commit 생성
+2. GitHub Actions dispatch로 build/deploy 트리거
+3. admin에서는 adapter만 교체해 "진짜 publish"로 확장
 
 ## GitHub-only MVP 한계
 - 관리자 페이지에서 repo에 직접 저장/발행 불가
