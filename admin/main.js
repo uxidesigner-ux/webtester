@@ -101,16 +101,6 @@ function setMessage(text, type = 'success') {
   adminMessage.className = `admin-message admin-message--${type}`;
 }
 
-function syncMetaFromReport(report) {
-  metaFields.slug.value = report.slug ?? '';
-  metaFields.title.value = report.title ?? '';
-  metaFields.subtitle.value = report.subtitle ?? '';
-  metaFields.description.value = report.description ?? '';
-  metaFields.date.value = report.date ?? '';
-  metaFields.theme.value = report.theme ?? '';
-  metaFields.sources.value = (report.sources ?? []).join(', ');
-}
-
 function readEditorJson() {
   return JSON.parse(editor.value);
 }
@@ -123,6 +113,16 @@ function normalizeOrder(report) {
   report.blocks = (report.blocks ?? [])
     .sort((a, b) => a.order - b.order)
     .map((block, index) => ({ ...block, order: index + 1 }));
+}
+
+function syncMetaFromReport(report) {
+  metaFields.slug.value = report.slug ?? '';
+  metaFields.title.value = report.title ?? '';
+  metaFields.subtitle.value = report.subtitle ?? '';
+  metaFields.description.value = report.description ?? '';
+  metaFields.date.value = report.date ?? '';
+  metaFields.theme.value = report.theme ?? '';
+  metaFields.sources.value = (report.sources ?? []).join(', ');
 }
 
 function setReport(report) {
@@ -139,10 +139,7 @@ function updateFromMeta() {
     report.description = metaFields.description.value.trim();
     report.date = metaFields.date.value;
     report.theme = metaFields.theme.value.trim();
-    report.sources = metaFields.sources.value
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
+    report.sources = metaFields.sources.value.split(',').map((s) => s.trim()).filter(Boolean);
     writeEditorJson(report);
     renderAll();
   } catch {
@@ -153,7 +150,6 @@ function updateFromMeta() {
 function addBlock(type) {
   const report = readEditorJson();
   const idx = (report.blocks?.length ?? 0) + 1;
-
   const block = {
     id: `${type}-${idx}`,
     type,
@@ -170,13 +166,7 @@ function addBlock(type) {
     block.chart = {
       type: 'bar',
       labels: ['A', 'B', 'C'],
-      datasets: [
-        {
-          label: '샘플',
-          data: [10, 20, 30],
-          backgroundColor: ['#2563eb', '#60a5fa', '#93c5fd']
-        }
-      ]
+      datasets: [{ label: '샘플', data: [10, 20, 30], backgroundColor: ['#2563eb', '#60a5fa', '#93c5fd'] }]
     };
   }
 
@@ -203,9 +193,7 @@ function moveBlock(blockId, offset) {
   const blocks = [...(report.blocks ?? [])].sort((a, b) => a.order - b.order);
   const currentIndex = blocks.findIndex((block) => block.id === blockId);
   const nextIndex = currentIndex + offset;
-
   if (currentIndex < 0 || nextIndex < 0 || nextIndex >= blocks.length) return;
-
   [blocks[currentIndex], blocks[nextIndex]] = [blocks[nextIndex], blocks[currentIndex]];
   report.blocks = blocks;
   normalizeOrder(report);
@@ -220,7 +208,6 @@ function applyRichTextSelection(blockId) {
 function renderBlockList(report) {
   blockList.innerHTML = '';
   const blocks = [...(report.blocks ?? [])].sort((a, b) => a.order - b.order);
-
   for (const [index, block] of blocks.entries()) {
     const li = document.createElement('li');
     li.className = 'admin-block-item';
@@ -231,12 +218,7 @@ function renderBlockList(report) {
 
     const meta = document.createElement('div');
     meta.className = 'admin-block-meta';
-    meta.innerHTML = `
-      <span>#${block.id}</span>
-      <span>${block.title ?? ''}</span>
-      <span>${block.sectionId}</span>
-      <span>${block.visibleInNav ? 'nav:on' : 'nav:off'}</span>
-    `;
+    meta.innerHTML = `<span>#${block.id}</span><span>${block.title ?? ''}</span><span>${block.sectionId}</span><span>${block.visibleInNav ? 'nav:on' : 'nav:off'}</span>`;
 
     const up = document.createElement('button');
     up.textContent = '↑';
@@ -272,9 +254,7 @@ function renderBlockList(report) {
 
 function getSelectedRichTextBlock(report) {
   if (!selectedRichTextId) return null;
-  return (report.blocks ?? []).find(
-    (block) => block.id === selectedRichTextId && block.type === 'rich-text'
-  ) ?? null;
+  return (report.blocks ?? []).find((block) => block.id === selectedRichTextId && block.type === 'rich-text') ?? null;
 }
 
 function updateSelectedRichText(mutator) {
@@ -288,7 +268,6 @@ function updateSelectedRichText(mutator) {
 
 function renderReferenceRows(references = []) {
   rtReferences.innerHTML = '';
-
   references.forEach((ref, idx) => {
     const row = document.createElement('div');
     row.className = 'admin-ref-item';
@@ -315,7 +294,6 @@ function renderReferenceRows(references = []) {
 function renderRichTextEditor() {
   const report = readEditorJson();
   const block = getSelectedRichTextBlock(report);
-
   if (!block) {
     richTextEditor.hidden = true;
     richTextTarget.textContent = '선택된 블록 없음';
@@ -332,7 +310,6 @@ function renderRichTextEditor() {
 
 function renderDraftList() {
   draftList.innerHTML = '';
-
   const slugs = JSON.parse(localStorage.getItem(DRAFT_INDEX_KEY) ?? '[]');
   if (slugs.length === 0) {
     draftList.innerHTML = '<li class="admin-list-empty">저장된 local draft가 없습니다.</li>';
@@ -366,10 +343,9 @@ function renderDraftList() {
 
 async function renderPublishedList() {
   publishedList.innerHTML = '<li class="admin-list-empty">published 목록 로딩 중...</li>';
-
   const candidates = ['middle-east-2025', 'middle-east-war-2026', 'tesla-weekly'];
-  const items = [];
 
+  const items = [];
   for (const slug of candidates) {
     try {
       const res = await fetch(`../content/reports/${slug}.json`, { cache: 'no-store' });
@@ -443,7 +419,6 @@ rtBody.addEventListener('input', () => {
 rtReferences.addEventListener('input', (event) => {
   const target = event.target;
   if (!(target instanceof HTMLInputElement)) return;
-
   const idx = Number(target.dataset.refIdx);
   const key = target.dataset.refKey;
   if (Number.isNaN(idx) || !key) return;
@@ -474,7 +449,6 @@ document.getElementById('new-report').addEventListener('click', () => {
 document.getElementById('save-draft').addEventListener('click', () => {
   const report = readEditorJson();
   const slug = report.slug?.trim() || 'untitled-draft';
-
   localStorage.setItem(STORAGE_KEY, editor.value);
   localStorage.setItem(`${DRAFT_ITEM_PREFIX}${slug}`, editor.value);
 
@@ -492,7 +466,6 @@ document.getElementById('load-draft').addEventListener('click', () => {
     setMessage('저장된 기본 초안이 없습니다.', 'warning');
     return;
   }
-
   editor.value = draft;
   renderAll();
   setMessage('기본 초안을 불러왔습니다.', 'success');
@@ -500,9 +473,7 @@ document.getElementById('load-draft').addEventListener('click', () => {
 
 document.getElementById('export-json').addEventListener('click', () => {
   const report = readEditorJson();
-  const blob = new Blob([JSON.stringify(report, null, 2)], {
-    type: 'application/json'
-  });
+  const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `${report.slug || 'report'}.json`;
@@ -514,7 +485,6 @@ document.getElementById('export-json').addEventListener('click', () => {
 document.getElementById('import-json').addEventListener('change', async (event) => {
   const [file] = event.target.files;
   if (!file) return;
-
   editor.value = await file.text();
   selectedRichTextId = null;
   renderAll();

@@ -33,9 +33,18 @@
       "styleVariant": "default",
       "order": 2,
       "items": [
-        { "label": "유가 변동성", "value": "+18%" },
-        { "label": "해상 운임", "value": "+11%" },
-        { "label": "보험 프리미엄", "value": "+24%" }
+        {
+          "label": "유가 변동성",
+          "value": "+18%"
+        },
+        {
+          "label": "해상 운임",
+          "value": "+11%"
+        },
+        {
+          "label": "보험 프리미엄",
+          "value": "+24%"
+        }
       ]
     },
     {
@@ -50,12 +59,27 @@
       "order": 3,
       "chart": {
         "type": "bar",
-        "labels": ["중국", "한국", "인도", "일본"],
+        "labels": [
+          "중국",
+          "한국",
+          "인도",
+          "일본"
+        ],
         "datasets": [
           {
             "label": "의존도(%)",
-            "data": [38, 12, 12, 8],
-            "backgroundColor": ["#1d4ed8", "#dc2626", "#2563eb", "#93c5fd"]
+            "data": [
+              38,
+              12,
+              12,
+              8
+            ],
+            "backgroundColor": [
+              "#1d4ed8",
+              "#dc2626",
+              "#2563eb",
+              "#93c5fd"
+            ]
           }
         ]
       }
@@ -71,8 +95,16 @@
       "styleVariant": "default",
       "order": 4,
       "events": [
-        { "date": "2026-02-01", "title": "해협 통항 경보", "description": "보험료 상승 시작" },
-        { "date": "2026-02-12", "title": "역내 군사 훈련", "description": "유가 급등" }
+        {
+          "date": "2026-02-01",
+          "title": "해협 통항 경보",
+          "description": "보험료 상승 시작"
+        },
+        {
+          "date": "2026-02-12",
+          "title": "역내 군사 훈련",
+          "description": "유가 급등"
+        }
       ]
     },
     {
@@ -87,6 +119,27 @@
       "order": 5,
       "href": "https://www.iea.org/reports/oil-market-report-march-2026",
       "linkLabel": "IEA 리포트 보기"
+    },
+    {
+      "id": "accordion-1",
+      "type": "accordion",
+      "sectionId": "faq",
+      "navLabel": "FAQ",
+      "visibleInNav": true,
+      "title": "자주 묻는 질문",
+      "description": "리포트 해석에 필요한 핵심 질의",
+      "styleVariant": "default",
+      "order": 6,
+      "items": [
+        {
+          "title": "왜 한국 의존도가 중요합니까?",
+          "content": "호르무즈 통과 물량 차질은 정유·전력·물류 비용을 동시에 자극하기 때문입니다."
+        },
+        {
+          "title": "단기적으로 가장 먼저 볼 지표는?",
+          "content": "운임, 보험료, 브렌트-두바이 스프레드, 해협 통항 공지 순으로 점검합니다."
+        }
+      ]
     }
   ]
 }

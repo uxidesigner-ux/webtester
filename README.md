@@ -20,6 +20,10 @@
 - 리포트 목록/상세 페이지는 `npm run build` 시 `dist/reports/index.html`, `dist/reports/{slug}/index.html`로 생성됩니다.
 - 따라서 PR에는 generated HTML이 아니라 `content/reports/*.json + renderer + build script + admin` 변경만 포함하는 것이 원칙입니다.
 
+## generated report UI 원칙
+- published report는 문서형이 아니라 **CodePen 계열 대시보드 셸**(모바일 탑바 + 데스크탑 사이드바 + active nav + 카드 계층)을 기준으로 렌더링합니다.
+- 차트/아코디언/앵커 이동/스크롤 스파이는 `src/js/report-page.js` 런타임에서 동작하며, JSON block 데이터 기반으로 hydrate 됩니다.
+
 ## 운영 흐름 요약
 1. `/admin/`에서 draft 작성/수정
 2. localStorage로 draft 저장(브라우저 내부)
@@ -58,6 +62,7 @@
   - `/`
   - `/admin/`
   - `/reports/`
+  - `/reports/middle-east-2025/`
   - `/reports/middle-east-war-2026/`
   - `/reports/tesla-weekly/`
 
