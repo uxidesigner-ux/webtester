@@ -4,11 +4,15 @@
 
 ## 프로젝트 구조
 - `admin/index.html`: 관리자 페이지 (기본 정보 편집 + 블록 추가/삭제/순서 변경 + localStorage + JSON import/export + preview)
-- `content/reports/*.json`: 리포트 원본 데이터 (샘플: `middle-east-war-2026`, `tesla-weekly`)
+- `content/reports/*.json`: 리포트 원본 데이터 (샘플: `middle-east-2025`, `middle-east-war-2026`, `tesla-weekly`)
 - `src/rendering/*`: 공통 report/block/chart renderer
-- `reports/index.html`: 소스 기준 리포트 목록
-- `reports/{slug}/index.html`: 소스 기준 리포트 페이지
 - `scripts/build-static.mjs`: `content/reports`를 읽어 `dist/reports/*` 생성
+- `dist/reports/*`: **generated output** (repo source가 아니라 build 산출물)
+
+## reports 디렉토리 정책
+- source repo에는 `reports/*.html`를 직접 두지 않습니다.
+- 리포트 목록/상세 페이지는 `npm run build` 시 `dist/reports/index.html`, `dist/reports/{slug}/index.html`로 생성됩니다.
+- 따라서 PR에는 generated HTML이 아니라 `content/reports/*.json + renderer + build script + admin` 변경만 포함하는 것이 원칙입니다.
 
 ## 관리자 페이지 사용법
 1. `npm run dev` 후 `http://localhost:5173/admin/` 접속
@@ -28,6 +32,10 @@
 2. `content/reports/{slug}.json` 추가
 3. `npm run check && npm run build`
 4. `dist/reports/{slug}/index.html` 생성 확인
+
+## 샘플 `middle-east-2025` 추가 이유
+- 플랫폼 전환 초기에 작성된 기존 샘플 데이터를 보존하기 위한 레퍼런스입니다.
+- `middle-east-war-2026`, `tesla-weekly`와 함께 서로 다른 주제/구조의 JSON 예시를 제공해 admin + renderer + build 검증 범위를 넓힙니다.
 
 ## build / preview
 - Check: `npm run check`
@@ -55,5 +63,4 @@
 - 실제 발행은 repo 파일 반영 + commit/push + Pages 배포 필요
 
 ## 남은 수동 작업
-- 신규 리포트 상세 페이지 템플릿 자동 생성 범위 확장 여부 결정
 - GitHub Actions 배포 워크플로에서 `dist/` 업로드 단계 점검
