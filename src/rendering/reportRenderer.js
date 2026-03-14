@@ -16,7 +16,18 @@ export function validateReport(report) {
   const sectionIds = new Set();
 
   for (const block of report?.blocks ?? []) {
-    const required = ['id', 'type', 'sectionId', 'navLabel', 'visibleInNav', 'title', 'description', 'styleVariant', 'order'];
+    const required = [
+      'id',
+      'type',
+      'sectionId',
+      'navLabel',
+      'visibleInNav',
+      'title',
+      'description',
+      'styleVariant',
+      'order'
+    ];
+
     for (const key of required) {
       if (block[key] === undefined || block[key] === null || block[key] === '') {
         errors.push(`block(${block.id ?? 'unknown'}) missing field: ${key}`);
@@ -32,7 +43,6 @@ export function validateReport(report) {
       errors.push(`block(${block.id ?? 'unknown'}) visibleInNav=true requires navLabel`);
     }
 
-
     if (block.type === 'rich-text') {
       const refs = block.references ?? [];
       for (const [idx, ref] of refs.entries()) {
@@ -45,9 +55,11 @@ export function validateReport(report) {
     if (block.type === 'chart') {
       const labels = block.chart?.labels ?? [];
       const datasets = block.chart?.datasets ?? [];
+
       if (!Array.isArray(labels) || labels.length === 0) {
         errors.push(`chart block(${block.id}) requires labels`);
       }
+
       for (const dataset of datasets) {
         if ((dataset.data ?? []).length !== labels.length) {
           errors.push(`chart block(${block.id}) labels/datasets length mismatch`);
@@ -55,11 +67,13 @@ export function validateReport(report) {
       }
     }
   }
+
   return errors;
 }
 
 export function renderReport(report) {
   const sortedBlocks = [...(report.blocks ?? [])].sort((a, b) => a.order - b.order);
+
   const nav = sortedBlocks
     .filter((block) => block.visibleInNav)
     .map((block) => `<a href="#${esc(block.sectionId)}">${esc(block.navLabel)}</a>`)
