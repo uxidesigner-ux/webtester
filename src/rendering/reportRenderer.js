@@ -32,7 +32,6 @@ export function validateReport(report) {
       errors.push(`block(${block.id ?? 'unknown'}) visibleInNav=true requires navLabel`);
     }
 
-
     if (block.type === 'rich-text') {
       const refs = block.references ?? [];
       for (const [idx, ref] of refs.entries()) {
@@ -55,6 +54,7 @@ export function validateReport(report) {
       }
     }
   }
+
   return errors;
 }
 

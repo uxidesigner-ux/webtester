@@ -47,11 +47,12 @@ for (const file of reportFiles) {
       throw new Error(`platform validation failed: ${file} block(${block.id ?? 'unknown'}) visibleInNav=true requires navLabel`);
     }
 
-
     if (block.type === 'rich-text') {
       for (const [idx, ref] of (block.references ?? []).entries()) {
         if (!String(ref?.url ?? '').trim()) {
-          throw new Error(`platform validation failed: ${file} rich-text block(${block.id ?? 'unknown'}) reference[${idx}] url is required`);
+          throw new Error(
+            `platform validation failed: ${file} rich-text block(${block.id ?? 'unknown'}) reference[${idx}] url is required`
+          );
         }
       }
     }
@@ -63,7 +64,9 @@ for (const file of reportFiles) {
       }
       for (const dataset of block.chart?.datasets ?? []) {
         if ((dataset.data ?? []).length !== labels.length) {
-          throw new Error(`platform validation failed: ${file} chart block(${block.id ?? 'unknown'}) labels/datasets length mismatch`);
+          throw new Error(
+            `platform validation failed: ${file} chart block(${block.id ?? 'unknown'}) labels/datasets length mismatch`
+          );
         }
       }
     }
