@@ -21,9 +21,24 @@ const metaFields = {
   sources: document.getElementById('meta-sources')
 };
 
-const requiredElements = [editor, previewRoot, blockList, adminMessage, previewFrame, desktopBtn, mobileBtn, ...Object.values(metaFields)];
+const requiredElements = [
+  editor,
+  previewRoot,
+  blockList,
+  adminMessage,
+  previewFrame,
+  desktopBtn,
+  mobileBtn,
+  ...Object.values(metaFields)
+];
+
 if (requiredElements.some((el) => !el)) {
-  document.body.innerHTML = '<main class="admin-init-error"><h1>Admin initialization failed</h1><p>Required admin elements are missing. Check admin/index.html IDs.</p></main>';
+  document.body.innerHTML = `
+    <main class="admin-init-error">
+      <h1>Admin initialization failed</h1>
+      <p>Required admin elements are missing. Check admin/index.html IDs.</p>
+    </main>
+  `;
   throw new Error('Admin initialization failed: missing required DOM elements');
 }
 
@@ -82,6 +97,7 @@ function normalizeOrder(report) {
 function renderBlockList(report) {
   blockList.innerHTML = '';
   const blocks = [...(report.blocks ?? [])].sort((a, b) => a.order - b.order);
+
   for (const [index, block] of blocks.entries()) {
     const li = document.createElement('li');
     li.className = 'admin-block-item';
@@ -92,7 +108,12 @@ function renderBlockList(report) {
 
     const meta = document.createElement('div');
     meta.className = 'admin-block-meta';
-    meta.innerHTML = `<span>#${block.id}</span><span>${block.title ?? ''}</span><span>${block.sectionId}</span><span>${block.visibleInNav ? 'nav:on' : 'nav:off'}</span>`;
+    meta.innerHTML = `
+      <span>#${block.id}</span>
+      <span>${block.title ?? ''}</span>
+      <span>${block.sectionId}</span>
+      <span>${block.visibleInNav ? 'nav:on' : 'nav:off'}</span>
+    `;
 
     const up = document.createElement('button');
     up.textContent = '↑';
@@ -127,7 +148,11 @@ function updateFromMeta() {
     report.description = metaFields.description.value.trim();
     report.date = metaFields.date.value;
     report.theme = metaFields.theme.value.trim();
-    report.sources = metaFields.sources.value.split(',').map((s) => s.trim()).filter(Boolean);
+    report.sources = metaFields.sources.value
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     writeEditorJson(report);
     renderAll();
   } catch {
@@ -143,6 +168,7 @@ function setReport(report) {
 function addBlock(type) {
   const report = readEditorJson();
   const idx = (report.blocks?.length ?? 0) + 1;
+
   const block = {
     id: `${type}-${idx}`,
     type,
@@ -159,7 +185,13 @@ function addBlock(type) {
     block.chart = {
       type: 'bar',
       labels: ['A', 'B', 'C'],
-      datasets: [{ label: '샘플', data: [10, 20, 30], backgroundColor: ['#2563eb', '#60a5fa', '#93c5fd'] }]
+      datasets: [
+        {
+          label: '샘플',
+          data: [10, 20, 30],
+          backgroundColor: ['#2563eb', '#60a5fa', '#93c5fd']
+        }
+      ]
     };
   }
 
@@ -180,7 +212,9 @@ function moveBlock(blockId, offset) {
   const blocks = [...(report.blocks ?? [])].sort((a, b) => a.order - b.order);
   const currentIndex = blocks.findIndex((block) => block.id === blockId);
   const nextIndex = currentIndex + offset;
+
   if (currentIndex < 0 || nextIndex < 0 || nextIndex >= blocks.length) return;
+
   [blocks[currentIndex], blocks[nextIndex]] = [blocks[nextIndex], blocks[currentIndex]];
   report.blocks = blocks;
   normalizeOrder(report);
@@ -233,6 +267,7 @@ document.getElementById('load-draft').addEventListener('click', () => {
     setMessage('저장된 초안이 없습니다.', 'error');
     return;
   }
+
   editor.value = draft;
   renderAll();
   setMessage('초안을 불러왔습니다.', 'success');
@@ -240,7 +275,9 @@ document.getElementById('load-draft').addEventListener('click', () => {
 
 document.getElementById('export-json').addEventListener('click', () => {
   const report = readEditorJson();
-  const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(report, null, 2)], {
+    type: 'application/json'
+  });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `${report.slug || 'report'}.json`;
@@ -252,6 +289,7 @@ document.getElementById('export-json').addEventListener('click', () => {
 document.getElementById('import-json').addEventListener('change', async (event) => {
   const [file] = event.target.files;
   if (!file) return;
+
   editor.value = await file.text();
   renderAll();
   setMessage('JSON 파일을 불러왔습니다.', 'success');
